@@ -1,4 +1,4 @@
-#' Default fitness formula for `genetic.search`
+#' Default fitness function for `genetic.search`
 #'
 #' @param errs.m a 1-row data.frame with cross-validation results
 #' @param max.formula.len the maximum length of the formula we are searching for

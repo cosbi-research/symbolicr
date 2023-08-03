@@ -1,3 +1,14 @@
+#' Normalize a dataset
+#'
+#' @param X.df The input dataset to be normalized
+#' @param custom.mins list of user-defined minimum values for dataset columns.
+#'
+#' @return A list with two values:
+#'
+#'         The input dataset normalized by subtracting the mean and dividing by the standard deviation.
+#'
+#'         A list with some column statistic: std.min, mean, sd
+#'
 normalize <- function(X.df, custom.mins){
   # is variables are categorical, don't standardize
   regressors <- names(X.df[, !grepl('^is\\.', names(X.df), fixed=F)])

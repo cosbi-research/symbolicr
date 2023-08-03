@@ -1,3 +1,55 @@
+#' Test a non-linear formula
+#'
+#' Test using K-fold cross-validation repeated N times
+#'
+#' @param cur.dataset The dataset to be used for the test
+#' @param y The independent variable
+#' @param cur.vars An array of non-linear formula terms to be tested. `cur.vars <- c('a','mul.a.b')` will test the formula `y ~ a + a*b`
+#' @param custom.abs.mins A list of user-defined minimum values for dataset columns.
+#' @param K The number of parts the dataset is split into for K-fold cross-validation.
+#' @param N The number of times the K-fold validation is repeated, shuffling the dataset row orders before each time.
+#' @param n.squares The maximum order of polynomials the `cur.vars` formula contains.
+#' @param transformations A list of potentially non-linear transformations allowed in `cur.vars`.
+#'
+#' @return A data.frame with cross-validation results for each fold (K) and for each round (N).
+#' @export
+#'
+#' @examples
+#'    # do actual cross-validation experiments, record in experiments data.frame
+#'    # all the validation-set performances
+#'    experiments.0 <- cross.validate(
+#'                       complete.X.df, y,
+#'                       cur.vars=c('inv.patch_hyd_2','patch_hyd_5'),
+#'                       custom.abs.mins=list(),
+#'                       K=7,
+#'                       N=10,
+#'                       n.squares=0,
+#'                       transformations=list(
+#'                             "log10"=function(x, z){ log10(0.1+abs(z)+x) },
+#'                             "inv"=function(x, z){ 1/(0.1+abs(z)+x) }
+#'                       )
+#'                     )
+#'
+#'    experiments.1 <- cross.validate(
+#'                       complete.X.df, y,
+#'                       cur.vars=c('inv.mul.patch_hyd_2.patch_hyd_2','mul.patch_hyd_5.patch_pos_.'),
+#'                       custom.abs.mins=list(),
+#'                       K=7,
+#'                       N=10,
+#'                       n.squares=1,
+#'                       transformations=list(
+#'                             "log10"=function(x, z){ log10(0.1+abs(z)+x) },
+#'                             "inv"=function(x, z){ 1/(0.1+abs(z)+x) }
+#'                       )
+#'                     )
+#'
+#'      # summarize cross-validation results by averaging
+#'      errs.m <- stats::aggregate(
+#'                      cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,
+#'                      data=experiments.1, FUN=mean
+#'                )
+#'
+#'
 cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.squares, transformations){
   regressors <- names(cur.dataset)
   dataset.len <- nrow(cur.dataset)

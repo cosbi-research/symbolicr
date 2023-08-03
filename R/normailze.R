@@ -1,7 +1,7 @@
 #' Normalize a dataset
 #'
 #' @param X.df The input dataset to be normalized
-#' @param custom.mins list of user-defined minimum values for dataset columns.
+#' @param custom.mins A list of user-defined minimum values for dataset columns.
 #'
 #' @return A list with two values:
 #'

@@ -1,10 +1,10 @@
 Package: symbolicr
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: SymbolicR
+Version: 0.1.0
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person("Danilo", "Tomasoni", , "tomasoni@cosbi.eu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-8427-4230"))
+Description: Find non-linear formulas that fits your input data. You can systematically explore and memoize the possible formulas and it's cross-validation performance, in an incremental fashon. Two search functions are available: `random.search` performs a random exploration, `genetic.search` employs a genetic optimization algorithm.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

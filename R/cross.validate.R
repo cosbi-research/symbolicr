@@ -15,8 +15,10 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #'    # do actual cross-validation experiments, record in experiments data.frame
-#'    # all the validation-set performances
+#'    # all the validation-set performances.
+#'    # NOTE: complete.X.df should contain the column `patch_hyd_2`, `patch_pos_.` and `patch_hyd_5`
 #'    experiments.0 <- cross.validate(
 #'                       complete.X.df, y,
 #'                       cur.vars=c('inv.patch_hyd_2','patch_hyd_5'),
@@ -25,30 +27,31 @@
 #'                       N=10,
 #'                       n.squares=0,
 #'                       transformations=list(
-#'                             "log10"=function(x, z){ log10(0.1+abs(z)+x) },
-#'                             "inv"=function(x, z){ 1/(0.1+abs(z)+x) }
+#'                             "log10"=function(x, min.val){
+#'                                            log10(0.1+abs(min.val)+x)
+#'                                     },
+#'                             "inv"=function(x, min.val){
+#'                                            1/(0.1+abs(min.val)+x)
+#'                                   }
 #'                       )
 #'                     )
 #'
 #'    experiments.1 <- cross.validate(
 #'                       complete.X.df, y,
-#'                       cur.vars=c('inv.mul.patch_hyd_2.patch_hyd_2','mul.patch_hyd_5.patch_pos_.'),
+#'                       cur.vars=c('inv.mul.patch_hyd_2.patch_hyd_2','patch_pos_.'),
 #'                       custom.abs.mins=list(),
 #'                       K=7,
 #'                       N=10,
-#'                       n.squares=1,
-#'                       transformations=list(
-#'                             "log10"=function(x, z){ log10(0.1+abs(z)+x) },
-#'                             "inv"=function(x, z){ 1/(0.1+abs(z)+x) }
-#'                       )
+#'                       n.squares=1
 #'                     )
 #'
 #'      # summarize cross-validation results by averaging
 #'      errs.m <- stats::aggregate(
-#'                      cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,
+#'                      cbind(base.pe, base.cor, base.r.squared,
+#'                            base.max.pe, base.iqr.pe, base.max.cooksd)~1,
 #'                      data=experiments.1, FUN=mean
 #'                )
-#'
+#'}
 #'
 cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.squares, transformations){
   regressors <- names(cur.dataset)

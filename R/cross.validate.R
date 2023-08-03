@@ -13,7 +13,7 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
     folds <- split(sample(1:ns),1:K)
     # K-fold CV
     #regressors.names <- regressors
-    cv.results.l <<- lapply(names(folds), FUN=function(foldid){
+    cv.results.l <- lapply(names(folds), FUN=function(foldid){
       # every CV round...
       fold_idx <- folds[[foldid]]
       train.set <- cur.dataset[-fold_idx, ]
@@ -59,7 +59,7 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
       cur.formula.str <- paste0('y',"~",paste(cur.vars, collapse=' + '))
 
       # == FIXED FORMULA
-      base.lm <- lm(as.formula(cur.formula.str), data=df.std)
+      base.lm <- stats::lm(stats::as.formula(cur.formula.str), data=df.std)
       s.base.lm <- summary(base.lm)
       s.df <- as.data.frame(s.base.lm$coefficients)
       base.full.coef <-as.data.frame(s.df$Estimate)
@@ -87,7 +87,7 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
       # test
       # return predicted
       #dt.pred<-predict(dt.lm, newdata=X.df.test.std)
-      base.pred<-predict(base.lm, newdata=X.df.test.std)
+      base.pred<-stats::predict(base.lm, newdata=X.df.test.std)
       #glmnet.pred<-as.data.frame(predict(glm.fit, newx=as.matrix(X.df.test.std), s = "lambda.min"))
       #names(glmnet.pred) <- "lambda.min"
       local.df <- data.frame(
@@ -127,14 +127,14 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
     #t.dt.lm <- lm(real~dt.pred, data=df)
     #s.t.dt.lm<-summary(t.dt.lm)
 
-    t.base.lm <- lm(real~base.pred, data=df)
+    t.base.lm <- stats::lm(real~base.pred, data=df)
     #s.t.base.lm<-summary(t.base.lm)
-    base.lm.cor <- cor(df$base.pred, df$real)
+    base.lm.cor <- stats::cor(df$base.pred, df$real)
     base.lm.r.squared <- 1 - sum((df$base.pred-df$real)^2) / sum((df$real - mean(df$real))^2)
     # https://www.statology.org/adjusted-r-squared-interpretation/
     #base.lm.adj.r.squared <- 1 - ((1-base.lm.r.squared)*(dataset.len-1)/(dataset.len-predictors.len-1))
 
-    base.cooksd <- cooks.distance(t.base.lm)
+    base.cooksd <- stats::cooks.distance(t.base.lm)
     max.base.cooksd <- base.cooksd[which(base.cooksd==max(base.cooksd))]
     max.base.outlayer.name <- names(max.base.cooksd)
 
@@ -155,9 +155,9 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
     cv.results[['base.cor']] <- base.lm.cor
     cv.results[['base.r.squared']] <- base.lm.r.squared
     base.pe<-abs(df$real-df$base.pred)/abs(df$real)
-    cv.results[['base.pe']] <- median( base.pe )
+    cv.results[['base.pe']] <- stats::median( base.pe )
     cv.results[['base.max.pe']] <- max( base.pe )
-    cv.results[['base.iqr.pe']] <- IQR( base.pe )
+    cv.results[['base.iqr.pe']] <- stats::IQR( base.pe )
     cv.results[['base.max.cooksd']] <- max.base.cooksd
     cv.results[['base.max.cooksd.name']] <- max.base.outlayer.name
 

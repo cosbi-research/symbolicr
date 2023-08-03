@@ -77,7 +77,7 @@ genetic.search <- function(
       experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N, n.squares,
                                     transformations)
 
-      errs.m <- aggregate(
+      errs.m <- stats::aggregate(
         cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,
         data=experiments, FUN=mean)
 
@@ -110,8 +110,8 @@ genetic.search <- function(
   }
 
   if(memoization){
-    dt.sample.res <- as.data.table(prev.sample.res)
-    setkeyv(dt.sample.res, cols="vars", physical = T)
+    dt.sample.res <- data.table::as.data.table(prev.sample.res)
+    data.table::setkeyv(dt.sample.res, cols="vars", physical = T)
   }else{
     dt.sample.res<-NULL
   }

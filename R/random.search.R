@@ -16,7 +16,7 @@ random.search <- function(
     res.filepath=NULL,
     memoization.interval=50,
     memoization=T){
-  regressors <- names(complete.X.df.std)
+  regressors <- names(complete.X.df)
   complete.regressors <- regressors
   if(n.squares>0){
     l <- list()
@@ -50,7 +50,7 @@ random.search <- function(
       cur.vars.str <- paste(sort(cur.vars), collapse=",")
       print(paste0("Regression on ", cur.vars.str))
       if(!is.null(prev.vars) && length(prev.vars) > 0){
-        res <- binsearch(function(i){
+        res <- gtools::binsearch(function(i){
           test.vars <- prev.vars[i]
           ifelse(cur.vars.str<test.vars, -1,
                  ifelse(cur.vars.str>test.vars, 1, 0))
@@ -62,7 +62,7 @@ random.search <- function(
         experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N, n.squares,
                                       transformations)
 
-        errs.m <- aggregate(
+        errs.m <- stats::aggregate(
           cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,
           data=experiments, FUN=mean)
 

@@ -1,10 +1,82 @@
+#' Genetic Algorithm for non-linear formula optimization
+#'
+#' Starting from an (optional) list of promising formulas,
+#' generated with other methods such as `random.search`,
+#' explore combinations (crossover) and alterations (mutation)
+#' of them in order maximize the value of the fitness function
+#' that defaults to `pe.r.squared.formula.len.fitness`
+#' @seealso random.search
+#'
+#'
+#' @param complete.X.df The dataset that contains the base variables the formula is composed of (column-wise)
+#' @param y The independent variable to be predicted with the formula
+#' @param n.squares The maximum order of the polynomial composition of base variables. Ex. `order 0 = a`, `order 1 = a*b`, `order 2 = a*b*c`
+#' @param max.formula.len The maximum number of terms in the formula
+#' @param seed An (optional) seed for deterministic run
+#' @param fitness.fun The function that determine the fitness of a given formula. Defaults to `pe.r.squared.formula.len.fitness`
+#' @param transformations A list of potentially non-linear transformations that can be applied on top of the squares. Ex. `order 0, transformation=log10 = log10.a`
+#' @param custom.abs.mins A list of user-defined minimum values for dataset columns.
+#' @param base.filepath Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.
+#' @param res.filepath Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.
+#' @param memoization If TRUE test results will be stored in `res.filepath`
+#' @param monitor Function that will be called on every iteration with the current solutions. Defaults to `monitor.formula.fun`
+#' @param maxiter Maximum number of genetic evolution epochs
+#' @param K The number of parts the dataset is split into for K-fold cross-validation.
+#' @param N The number of times the K-fold validation is repeated, shuffling the dataset row orders before each time.
+#' @param pcrossover The probability of crossover between pairs of chromosomes. Typically this is a large value and by default is set to 0.8.
+#' @param popSize The population size, the number of formulas considered for genetic evolution.
+#' @param pmutation The probability of mutation in a parent chromosome. Usually mutation occurs with a small probability, and by default is set to 0.1.
+#' @param keepBest If TRUE, the value `best.iter` of the list returned, will contain a list of the best formulas at each evolution iteration.
+#' @param best.vars.l A list of formulas. Each formula is an array of strings, each string is the textual representation of a formula term. Ex. `cur.vars.l <- list(c('a','mul.a.b'))` will test the formula `y ~ a + a*b`. This list is used as a starting point for genetic evolution. It may come from a-priori knowledge or by extracting the most promising results from `random.search`.
+#'
+#' @return A list with three values:
+#'    list(
+#'       best: the best formula found overall
+#'       best.iter: a list of best formulas, one for each evolution iteration
+#'       results: The output of the GA::ga function, with all the solutions, hyperparameters, etc.
+#'    )
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'# variables  app_charge pI_Fc patch_pos_3 patch_hyd_2
+#'             patch_hyd_5 ens_dipole and is.monovalent
+#'# are assumed to be in the complete.X.df input dataset
+#'# variables starting with 'is.' suffix won't be normalized,
+#'# because assumed to be categorical variables (0/1)
+#'best.vars.l <- list(
+#'  #c('log10.mul.app_charge.pI_Fc','log10.patch_pos_3',
+#'     'mul.patch_pos.pI_Fc'),
+#'  #c('inv.mul.patch_hyd_2.patch_hyd_2'),
+#'  c('inv.mul.patch_hyd_5.patch_hyd_5','log10.mul.pI_Fc.pI_Fc',
+#'    'mul.ens_dipole.is.monovalent')
+#')
+#'best.finetuned <- genetic.search(
+#'  complete.X.df,
+#'  l.F2,
+#'  n.squares=1,
+#'  maxiter=1000,
+#'  base.filepath=file.path(...),
+#'  res.filepath=file.path(...),
+#'  memoization=T,
+#'  pcrossover=0.2,
+#'  pmutation=0.8,
+#'  seed=NULL,
+#'  max.formula.len=4,
+#'  keepBest=T,
+#'  K=17,
+#'  N=10,
+#'  popSize = 100,
+#'  best.vars.l = best.vars.l
+#')
+#'}
 genetic.search <- function(
-    best.vars.l,
     complete.X.df,
-    n.squares,
     y,
-    seed=NULL,
+    n.squares=1,
     max.formula.len=4,
+    seed=NULL,
     fitness.fun=pe.r.squared.formula.len.fitness,
     transformations=list(
       "log10"=function(x, z){ log10(0.1+abs(z)+x) },
@@ -21,7 +93,8 @@ genetic.search <- function(
     pcrossover=0.2,
     popSize=50,
     pmutation=0.8,
-    keepBest=F
+    keepBest=F,
+    best.vars.l=list()
 ){
 
   if(memoization){

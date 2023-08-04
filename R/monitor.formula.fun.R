@@ -1,3 +1,10 @@
+#' Default formula to monitor genetic evolution
+#'
+#' @param obj The solution object of the `GA` package.
+#' @seealso genetic.search
+#'
+#' @export
+#'
 monitor.formula.fun<- function(obj) {
   max.fitness <- max(obj@fitness)
   avg.fitness <- mean(obj@fitness)

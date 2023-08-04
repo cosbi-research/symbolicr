@@ -1,3 +1,23 @@
+#' Parse text representation of a non-linear formula term
+#'
+#' Return a list with the non-linear function applied and the base terms of the formula.
+#' @seealso random.search
+#' @seealso genetic.search
+#'
+#' @param cur.vars An array of non-linear formula terms. Ex. `cur.vars <- c('a','mul.a.b')` represents the formula `y ~ a + a*b`
+#' @param base.regressors The `names(X)` where X is the input dataset.
+#' @param transformations A list of potentially non-linear transformations allowed in `cur.vars`.
+#'
+#' @return A list with the base regressors and the transformation function to be applied
+#' @export
+#'
+#' @examples
+#' parse.vars(
+#'  c('log.a', 'mul.a.mul.b.c'),
+#'  base.regressors=c('a','b','c'),
+#'  transformations=list('log'=log)
+#' )
+#'
 parse.vars <- function(cur.vars, base.regressors, transformations=list()){
   lapply(cur.vars, function(curvar){
     # at top-level we may have a transformation

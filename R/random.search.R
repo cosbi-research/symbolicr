@@ -1,8 +1,44 @@
+#' Random search for non-linear formula optimization
+#'
+#' Randomly sample and test different formulas with cross-validation.
+#' @seealso genetic.search
+#' @seealso cross.validate
+#' @seealso empty.sample
+#'
+#' @param complete.X.df The dataset that contains the base variables the formula is composed of (column-wise)
+#' @param y The independent variable to be predicted with the formula
+#' @param n.squares The maximum order of the polynomial composition of base variables. Ex. `order 0 = a`, `order 1 = a*b`, `order 2 = a*b*c`
+#' @param formula.len The number of terms in the formulas that will be randomly sampled.
+#' @param K The number of parts the dataset is split into for K-fold cross-validation.
+#' @param N The number of times the K-fold validation is repeated, shuffling the dataset row orders before each time.
+#' @param seed An (optional) seed for deterministic run
+#' @param transformations A list of potentially non-linear transformations that can be applied on top of the squares. Ex. `order 0, transformation=log10 = log10.a`
+#' @param custom.abs.mins A list of user-defined minimum values for dataset columns.
+#' @param maxiter Maximum number of genetic evolution epochs
+#' @param base.filepath Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.
+#' @param res.filepath Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.
+#' @param memoization.interval The number of formulas to sample at each iteration, and the frequency of update of `res.filepath` if memoization=TRUE.
+#' @param memoization If TRUE test results will be stored in `res.filepath`
+#'
+#' @return A data.frame of formulas and the corresponding cross-validation performance measures (R-squared, absolute relative error, max cooks distance). See also `empty.sample`.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   new.sample.res <- random.search(
+#'      complete.X.df, l.F2,
+#'      n.squares=1,
+#'      formula.len=3,
+#'      maxiter=1000000,
+#'      base.filepath = base.filepath,
+#'      res.filepath = res.filepath, memoization=T
+#'  )
+#'}
 random.search <- function(
     complete.X.df,
-    n.squares,
-    formula.len,
     y,
+    n.squares=1,
+    formula.len=3,
     K=7,
     N=10,
     seed=NULL,

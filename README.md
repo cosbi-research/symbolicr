@@ -19,8 +19,12 @@ interoperable search functions are available:
 You can install the development version of symbolicr like so:
 
 ``` r
-devtools::install_gitlab('COSBI/symbolicr', host)
+devtools::install_gitlab('COSBI/symbolicr', host='source.cosbi.eu', auth_token='glpat-....')
 ```
+
+If you don’t have an auth token, login to source.cosbi.eu and generate
+one by following [this
+guide](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token).
 
 ## Example
 
@@ -28,5 +32,11 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(symbolicr)
-## basic example code
+
+x1<-runif(100, min=2, max=67)
+x2<-runif(100, min=0.01, max=0.1)
+
+y <- log10(x1^2*x2)
+
+X <- data.frame(x1=x1, x2=x2)
 ```

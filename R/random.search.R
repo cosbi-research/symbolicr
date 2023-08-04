@@ -51,7 +51,7 @@ random.search <- function(
     base.filepath=NULL,
     res.filepath=NULL,
     memoization.interval=50,
-    memoization=T){
+    memoization=F){
   regressors <- names(complete.X.df)
   complete.regressors <- regressors
   if(n.squares>0){

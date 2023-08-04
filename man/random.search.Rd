@@ -23,7 +23,7 @@ random.search(
   base.filepath = NULL,
   res.filepath = NULL,
   memoization.interval = 50,
-  memoization = T
+  memoization = F
 )
 }
 \arguments{

@@ -47,7 +47,7 @@ library(symbolicr)
 x1<-runif(100, min=2, max=67)
 x2<-runif(100, min=0.01, max=0.1)
 
-y <- log10(x1^2*x2) + rnorm(100, 0, 1)
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
 
 X <- data.frame(x1=x1, x2=x2)
 
@@ -58,12 +58,10 @@ results <- genetic.search(
   N=2,
   K=10,
   best.vars.l = list(
-   c('x1')
+   c('log.x1')
   ),
   transformations = list(
-    # NB: function applied to standardized X values!
-    #     they can be negative
-   "log"=function(x, stats){ log(0.1 + abs(stats$min) + x) },
+   "log"=function(x, stats){ log(x) },
    "exp"=function(x, stats){ exp(x) }
   ),
   keepBest=T,
@@ -72,7 +70,7 @@ results <- genetic.search(
 
 ```
 
-The non-linear formula found is really close!
+We found the correct non-linear formula starting from an initial guess!
 We can now get the best formula
 
 ```{r best}
@@ -83,3 +81,21 @@ And all the formula the genetic algorithm found to be best at each one of the 10
 ```{r evolution}
 results$best.iter
 ```
+Note that `cv.norm=FALSE` means data is used as-is.
+Before running this example we checked for the non-negativeness of `x1^2*x2`.
+If you would like to normalize data to avoid scaling issues just use `cv.norm=TRUE` 
+but in this case, to avoid computing the log of a negative value, we use this updated transformation function
+
+```{r log-std}
+# NB: function applied to standardized X values!
+   #     they can be negative
+log.std <- function(x, stats){ log(0.1 + abs(stats$min) + x) }
+```
+
+The `stats` object contains 
+- min: the minimum of the column values
+- absmin: the minimum of the absolute values of the columns
+- absmax: the maximum of the absolute values of the columns
+- projzero: -mean/sd of the columns, that is the position of the zero in the original, non-normalized space.
+
+Type `?dataset.min.maxs` in your R console for further informations.

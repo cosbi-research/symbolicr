@@ -12,7 +12,8 @@ cross.validate(
   K,
   N,
   n.squares,
-  transformations
+  transformations,
+  cv.norm
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ cross.validate(
 \item{n.squares}{The maximum order of polynomials the \code{cur.vars} formula contains.}
 
 \item{transformations}{A list of potentially non-linear transformations allowed in \code{cur.vars}.}
+
+\item{cv.norm}{Normalize regressors after train-validation split in inner cross-validation loop.}
 }
 \value{
 A data.frame with cross-validation results for each fold (K) and for each round (N).

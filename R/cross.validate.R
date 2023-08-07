@@ -10,6 +10,7 @@
 #' @param N The number of times the K-fold validation is repeated, shuffling the dataset row orders before each time.
 #' @param n.squares The maximum order of polynomials the `cur.vars` formula contains.
 #' @param transformations A list of potentially non-linear transformations allowed in `cur.vars`.
+#' @param cv.norm Normalize regressors after train-validation split in inner cross-validation loop.
 #'
 #' @return A data.frame with cross-validation results for each fold (K) and for each round (N).
 #' @export
@@ -53,7 +54,7 @@
 #'                )
 #'}
 #'
-cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.squares, transformations){
+cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.squares, transformations, cv.norm){
   regressors <- names(cur.dataset)
   dataset.len <- nrow(cur.dataset)
   predictors.len <- length(cur.vars)
@@ -78,6 +79,9 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
       test.len <- nrow(test.set)
       y.test <- y[fold_idx]
 
+      if(is.null(names(y.test))){
+        names(y.test) <- row.names(test.set)
+      }
       test.set.name <- paste(names(y.test), collapse=", ")
       #print(paste0(" == computing ",test.set.name))
 
@@ -88,12 +92,18 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
 
       # standardize, and keep mean/sd for every regressor for testing
       #print("Standardize base regressors...")
-      norm.res <- normalize(X.df, custom.abs.mins)
-      X.df.std <- norm.res$X.std
-      X.mean.sd <-norm.res$mean.sd
+      if(cv.norm){
+        norm.res <- normalize(X.df, custom.abs.mins)
+        X.df.std <- norm.res$X.std
+        X.mean.sd <-norm.res$mean.sd
 
-      # normalize test with mean/sd from train
-      X.df.test.std <- normalize.test(X.df.test, X.mean.sd)
+        # normalize test with mean/sd from train
+        X.df.test.std <- normalize.test(X.df.test, X.mean.sd)
+      }else{
+        X.df.std <- X.df
+        X.df.test.std <- X.df.test
+        X.mean.sd <- NULL
+      }
 
       # compute min values on complete dataset to avoid out of domain errors
       regressors.def <- compute.regressors(rbind(X.df.std, X.df.test.std), parsed.vars, transformations, X.mean.sd)
@@ -114,7 +124,12 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
       cur.formula.str <- paste0('y',"~",paste(cur.vars, collapse=' + '))
 
       # == FIXED FORMULA
-      base.lm <- stats::lm(stats::as.formula(cur.formula.str), data=df.std)
+      base.lm <- tryCatch({ stats::lm(stats::as.formula(cur.formula.str), data=df.std) },
+                          error=function(e){
+                              # use intercept-only model
+                              stats::lm(y~1, data=df.std)
+                          },
+                          message=paste0("Regressors contains NaN/Inf values in formula '",cur.formula.str,"': fallback to intercept-only regression"))
       s.base.lm <- summary(base.lm)
       s.df <- as.data.frame(s.base.lm$coefficients)
       base.full.coef <-as.data.frame(s.df$Estimate)
@@ -191,7 +206,12 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
 
     base.cooksd <- stats::cooks.distance(t.base.lm)
     max.base.cooksd <- base.cooksd[which(base.cooksd==max(base.cooksd))]
-    max.base.outlayer.name <- names(max.base.cooksd)
+    if(length(max.base.cooksd)>0)
+      max.base.outlayer.name <- names(max.base.cooksd)
+    else{
+      max.base.cooksd <- 0
+      max.base.outlayer.name <- ""
+    }
 
     # store N K-fold validation number
     cv.results[['N']] <- i

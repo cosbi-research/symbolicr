@@ -35,7 +35,7 @@ compute.regressors <- function(base.X.df.std, parsed.vars, transformations, X.me
       transf <- transformations[[parsed.vars[[col_idx]]$transformation.name]]
       v<-names(X.df.std.mul)[col_idx]
       # create new column
-      df <- as.data.frame(transf(X.df.std.mul[[v]], regressors.min.values[[v]]$min))
+      df <- as.data.frame(transf(X.df.std.mul[[v]], regressors.min.values[[v]]))
       names(df) <- paste0(parsed.vars[[col_idx]]$transformation.name, '.', v)
       row.names(df) <- row.names(X.df.std.mul)
     }

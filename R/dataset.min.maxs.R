@@ -18,7 +18,7 @@ dataset.min.maxs <- function(X.df.std, X.mean.sd){
     # account for all future values where the minimum is
     # at least 2 sd from current dataset minimum
     vals <- X.df.std[[v]]
-    if(v %in% names(X.mean.sd))
+    if(!is.null(X.mean.sd) && v %in% names(X.mean.sd))
       prjzero <- -X.mean.sd[[v]]$mean/X.mean.sd[[v]]$sd
     else
       prjzero <- 0

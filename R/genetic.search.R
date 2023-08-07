@@ -27,6 +27,7 @@
 #' @param popSize The population size, the number of formulas considered for genetic evolution.
 #' @param pmutation The probability of mutation in a parent chromosome. Usually mutation occurs with a small probability, and by default is set to 0.1.
 #' @param keepBest If TRUE, the value `best.iter` of the list returned, will contain a list of the best formulas at each evolution iteration.
+#' @param cv.norm Normalize regressors after train-validation split in inner cross-validation loop.
 #' @param best.vars.l A list of formulas. Each formula is an array of strings, each string is the textual representation of a formula term. Ex. `cur.vars.l <- list(c('a','mul.a.b'))` will test the formula `y ~ a + a*b`. This list is used as a starting point for genetic evolution. It may come from a-priori knowledge or by extracting the most promising results from `random.search`.
 #'
 #' @return A list with three values:
@@ -94,6 +95,7 @@ genetic.search <- function(
     popSize=50,
     pmutation=0.8,
     keepBest=F,
+    cv.norm=F,
     best.vars.l=list()
 ){
 
@@ -148,7 +150,7 @@ genetic.search <- function(
 
     if(nrow(prev.res) == 0){
       experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N, n.squares,
-                                    transformations)
+                                    transformations, cv.norm)
 
       errs.m <- stats::aggregate(
         cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,

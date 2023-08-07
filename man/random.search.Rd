@@ -23,7 +23,8 @@ random.search(
   base.filepath = NULL,
   res.filepath = NULL,
   memoization.interval = 50,
-  memoization = F
+  memoization = F,
+  cv.norm = F
 )
 }
 \arguments{
@@ -54,6 +55,8 @@ random.search(
 \item{memoization.interval}{The number of formulas to sample at each iteration, and the frequency of update of \code{res.filepath} if memoization=TRUE.}
 
 \item{memoization}{If TRUE test results will be stored in \code{res.filepath}}
+
+\item{cv.norm}{Normalize regressors after train-validation split in inner cross-validation loop.}
 }
 \value{
 A data.frame of formulas and the corresponding cross-validation performance measures (R-squared, absolute relative error, max cooks distance). See also \code{empty.sample}.

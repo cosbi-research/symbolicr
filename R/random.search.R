@@ -19,6 +19,7 @@
 #' @param res.filepath Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.
 #' @param memoization.interval The number of formulas to sample at each iteration, and the frequency of update of `res.filepath` if memoization=TRUE.
 #' @param memoization If TRUE test results will be stored in `res.filepath`
+#' @param cv.norm Normalize regressors after train-validation split in inner cross-validation loop.
 #'
 #' @return A data.frame of formulas and the corresponding cross-validation performance measures (R-squared, absolute relative error, max cooks distance). See also `empty.sample`.
 #' @export
@@ -51,7 +52,8 @@ random.search <- function(
     base.filepath=NULL,
     res.filepath=NULL,
     memoization.interval=50,
-    memoization=F){
+    memoization=F,
+    cv.norm=F){
   regressors <- names(complete.X.df)
   complete.regressors <- regressors
   if(n.squares>0){
@@ -96,7 +98,7 @@ random.search <- function(
       }
       if(res$flag != 'Found'){
         experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N, n.squares,
-                                      transformations)
+                                      transformations, cv.norm)
 
         errs.m <- stats::aggregate(
           cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,

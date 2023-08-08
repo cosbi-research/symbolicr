@@ -105,15 +105,12 @@ random.search <- function(
           data=experiments, FUN=mean)
 
         errs.m$base.max.cooksd.name <- paste(unique(experiments$base.max.cooksd.name), collapse=",")
-        errs.m$glmnet.pe <- NA
-        errs.m$glmnet.r.squared <- NA
         errs.m$vars <- paste(cur.vars, collapse=',')
         errs.m$n.squares <- n.squares
         errs.m$formula.len <- formula.len
 
         errs.m <- errs.m[, c('base.pe','base.cor','base.r.squared',
                              'base.max.pe', 'base.iqr.pe', 'base.max.cooksd', 'base.max.cooksd.name',
-                             'glmnet.pe','glmnet.r.squared',
                              'vars', 'n.squares', 'formula.len')]
       }else{
         print("NOTICE: Skipping already computed..")

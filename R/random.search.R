@@ -79,7 +79,7 @@ random.search <- function(
 
   # COMPLETELY RANDOMIZED ALGORITHM, WITH 'MANUAL' OPTIMIZATION AT THE END
   while(cur.start < maxiter && cur.start < tot.rows){
-    max.r.comb <- RcppAlgos::comboSample(complete.regressors, formula.len, n=memoization.interval,
+    max.r.comb <- RcppAlgos::comboSample(complete.regressors, formula.len, n=min(tot.rows, memoization.interval),
                                          nThreads = 2, seed=seed)# seed=seed)
 
     l <- apply(max.r.comb, MARGIN=1, simplify = F, FUN=function(cur.vars){

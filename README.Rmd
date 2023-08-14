@@ -135,3 +135,33 @@ You can then inspect results in the resulting data.frame:
 ```{r random.inspect}
 random.results[order(random.results$base.r.squared, decreasing = T), ][seq(5), ]
 ```
+
+## Combinatorial Search
+
+Search over all non-duplicated combinations of terms taken from an user-supplied list of formulas.
+
+
+```{r combination.example}
+library(symbolicr)
+
+x1<-runif(100, min=2, max=67)
+x2<-runif(100, min=0.01, max=0.1)
+
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+
+X <- data.frame(x1=x1, x2=x2)
+
+comb.search(
+  X, y, 
+  formulas.l=list(c('x1','x2'), c('log.x1')), 
+  formula.len = 2, 
+  N=2,
+  K=10,
+  transformations = list(
+   "log"=function(x, stats){ log(x) },
+   "exp"=function(x, stats){ exp(x) }
+  ),
+  cv.norm=F
+)
+
+```

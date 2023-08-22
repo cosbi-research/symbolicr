@@ -18,8 +18,8 @@ genetic.search(
      1/(0.1 + abs(z) + x)
  }),
   custom.abs.mins = list(),
-  base.filepath = NULL,
-  res.filepath = NULL,
+  glob.filepath = NULL,
+  local.filepath = NULL,
   memoization = F,
   monitor = monitor.formula.fun,
   maxiter = 100,
@@ -50,9 +50,9 @@ genetic.search(
 
 \item{custom.abs.mins}{A list of user-defined minimum values for dataset columns.}
 
-\item{base.filepath}{Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.}
+\item{glob.filepath}{Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.}
 
-\item{res.filepath}{Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.}
+\item{local.filepath}{Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.}
 
 \item{memoization}{If TRUE test results will be stored in \code{res.filepath}}
 
@@ -110,8 +110,8 @@ best.finetuned <- genetic.search(
  l.F2,
  n.squares=1,
  maxiter=1000,
- base.filepath=file.path(...),
- res.filepath=file.path(...),
+ glob.filepath=file.path(...),
+ local.filepath=file.path(...),
  memoization=F,
  pcrossover=0.2,
  pmutation=0.8,

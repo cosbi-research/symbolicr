@@ -100,7 +100,11 @@ genetic.search <- function(
 ){
 
   if(memoization){
-    prev.sample.res <- readRDS(glob.filepath)
+    if(is.character(glob.filepath) & length(glob.filepath) == 1)
+      prev.sample.res <- readRDS(glob.filepath)
+    else if(is.character(glob.filepath))
+      prev.sample.res <- do.call(rbind,lapply(glob.filepath, function(path) readRDS(path)))
+
     # restore from previously interrupted run
     if(file.exists(local.filepath)){
       new.sample.res <- readRDS(local.filepath)
@@ -165,7 +169,6 @@ genetic.search <- function(
 
       errs.m <- errs.m[, c('base.pe','base.cor','base.r.squared',
                            'base.max.pe', 'base.iqr.pe', 'base.max.cooksd', 'base.max.cooksd.name',
-                           'glmnet.pe','glmnet.r.squared',
                            'vars', 'n.squares', 'formula.len')]
       # save
       if(memoization){
@@ -176,7 +179,6 @@ genetic.search <- function(
       #print("NOTICE: Skipping already computed..")
       errs.m <- data.frame(base.pe=prev.res$base.pe[1],base.cor=prev.res$base.cor[1],base.r.squared=prev.res$base.r.squared[1],
                            base.max.pe=prev.res$base.max.pe[1], base.iqr.pe=prev.res$base.iqr.pe[1], base.max.cooksd=prev.res$base.max.cooksd[1], base.max.cooksd.name=prev.res$base.max.cooksd.name[1],
-                           glmnet.pe=prev.res$glmnet.pe[1],glmnet.r.squared=prev.res$glmnet.r.squared[1],
                            vars=prev.res$vars[1], n.squares=prev.res$n.squares[1], formula.len=prev.res$formula.len[1])
     }
 

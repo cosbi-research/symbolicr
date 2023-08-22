@@ -20,8 +20,8 @@ random.search(
  }),
   custom.abs.mins = list(),
   maxiter = 100,
-  base.filepath = NULL,
-  res.filepath = NULL,
+  glob.filepath = NULL,
+  local.filepath = NULL,
   memoization.interval = 50,
   memoization = F,
   cv.norm = F
@@ -48,9 +48,9 @@ random.search(
 
 \item{maxiter}{Maximum number of genetic evolution epochs}
 
-\item{base.filepath}{Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.}
+\item{glob.filepath}{Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.}
 
-\item{res.filepath}{Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.}
+\item{local.filepath}{Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.}
 
 \item{memoization.interval}{The number of formulas to sample at each iteration, and the frequency of update of \code{res.filepath} if memoization=TRUE.}
 
@@ -71,7 +71,7 @@ Randomly sample and test different formulas with cross-validation.
      n.squares=1,
      formula.len=3,
      maxiter=1000000,
-     base.filepath = base.filepath,
+     glob.filepath = base.filepath,
      res.filepath = res.filepath, memoization=T
  )
 }

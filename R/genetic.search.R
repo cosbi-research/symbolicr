@@ -16,8 +16,8 @@
 #' @param fitness.fun The function that determine the fitness of a given formula. Defaults to `pe.r.squared.formula.len.fitness`
 #' @param transformations A list of potentially non-linear transformations that can be applied on top of the squares. Ex. `order 0, transformation=log10 = log10.a`
 #' @param custom.abs.mins A list of user-defined minimum values for dataset columns.
-#' @param base.filepath Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.
-#' @param res.filepath Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.
+#' @param glob.filepath Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.
+#' @param local.filepath Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.
 #' @param memoization If TRUE test results will be stored in `res.filepath`
 #' @param monitor Function that will be called on every iteration with the current solutions. Defaults to `monitor.formula.fun`
 #' @param maxiter Maximum number of genetic evolution epochs
@@ -58,8 +58,8 @@
 #'  l.F2,
 #'  n.squares=1,
 #'  maxiter=1000,
-#'  base.filepath=file.path(...),
-#'  res.filepath=file.path(...),
+#'  glob.filepath=file.path(...),
+#'  local.filepath=file.path(...),
 #'  memoization=F,
 #'  pcrossover=0.2,
 #'  pmutation=0.8,
@@ -84,8 +84,8 @@ genetic.search <- function(
       "inv"=function(x, z){ 1/(0.1+abs(z)+x) }
     ),
     custom.abs.mins=list(),
-    base.filepath=NULL,
-    res.filepath=NULL,
+    glob.filepath=NULL,
+    local.filepath=NULL,
     memoization=F,
     monitor=monitor.formula.fun,
     maxiter=100,
@@ -100,10 +100,10 @@ genetic.search <- function(
 ){
 
   if(memoization){
-    prev.sample.res <- readRDS(base.filepath)
+    prev.sample.res <- readRDS(glob.filepath)
     # restore from previously interrupted run
-    if(file.exists(res.filepath)){
-      new.sample.res <- readRDS(res.filepath)
+    if(file.exists(local.filepath)){
+      new.sample.res <- readRDS(local.filepath)
     }else{
       new.sample.res <- empty.sample()
     }
@@ -228,7 +228,7 @@ genetic.search <- function(
                           keepBest=keepBest
   )
   if(memoization)
-    saveRDS(new.sample.res, res.filepath)
+    saveRDS(new.sample.res, local.filepath)
 
   best.iter<-NULL
   if(keepBest)

@@ -15,8 +15,8 @@
 #' @param transformations A list of potentially non-linear transformations that can be applied on top of the squares. Ex. `order 0, transformation=log10 = log10.a`
 #' @param custom.abs.mins A list of user-defined minimum values for dataset columns.
 #' @param maxiter Maximum number of genetic evolution epochs
-#' @param base.filepath Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.
-#' @param res.filepath Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.
+#' @param glob.filepath Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.
+#' @param local.filepath Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.
 #' @param memoization.interval The number of formulas to sample at each iteration, and the frequency of update of `res.filepath` if memoization=TRUE.
 #' @param memoization If TRUE test results will be stored in `res.filepath`
 #' @param cv.norm Normalize regressors after train-validation split in inner cross-validation loop.
@@ -31,7 +31,7 @@
 #'      n.squares=1,
 #'      formula.len=3,
 #'      maxiter=1000000,
-#'      base.filepath = base.filepath,
+#'      glob.filepath = base.filepath,
 #'      res.filepath = res.filepath, memoization=T
 #'  )
 #'}
@@ -49,8 +49,8 @@ random.search <- function(
     ),
     custom.abs.mins=list(),
     maxiter=100,
-    base.filepath=NULL,
-    res.filepath=NULL,
+    glob.filepath=NULL,
+    local.filepath=NULL,
     memoization.interval=50,
     memoization=F,
     cv.norm=F){
@@ -71,7 +71,11 @@ random.search <- function(
   new.sample.res <- empty.sample()
   prev.vars=NULL
   if(memoization){
-    prev.sample.res <- readRDS(base.filepath)
+    prev.sample.res <- readRDS(glob.filepath)
+    # restore from previously interrupted run
+    if(file.exists(local.filepath)){
+      prev.sample.res <- rbind(prev.sample.res, readRDS(local.filepath))
+    }
     prev.vars<-sort(prev.sample.res$vars, decreasing=F)
   }
 
@@ -123,7 +127,7 @@ random.search <- function(
     sample.res<-do.call(rbind,l)
     new.sample.res <- rbind(new.sample.res, sample.res)
     if(memoization){
-      saveRDS(new.sample.res, res.filepath)
+      saveRDS(new.sample.res, local.filepath)
     }
     cur.start <- cur.start + memoization.interval
   }

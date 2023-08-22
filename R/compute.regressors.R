@@ -1,4 +1,4 @@
-compute.regressors <- function(base.X.df.std, parsed.vars, transformations, X.mean.sd){
+compute.regressors <- function(base.X.df.std, parsed.vars, transformations, X.mean.sd, regressors.min.values=NULL){
   regressors <- names(base.X.df.std)
 
   # multiplication only
@@ -25,7 +25,8 @@ compute.regressors <- function(base.X.df.std, parsed.vars, transformations, X.me
   }))
 
   # get min values
-  regressors.min.values <- dataset.min.maxs(X.df.std.mul, X.mean.sd)
+  if(is.null(regressors.min.values))
+    regressors.min.values <- dataset.min.maxs(X.df.std.mul, X.mean.sd)
 
   X.df.std.mul.transf <- do.call(cbind, lapply(seq(length(parsed.vars)), FUN=function(col_idx){
     if(is.null(parsed.vars[[col_idx]]$transformation.name)){

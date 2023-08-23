@@ -161,8 +161,6 @@ genetic.search <- function(
         data=experiments, FUN=mean)
 
       errs.m$base.max.cooksd.name <- paste(unique(experiments$base.max.cooksd.name), collapse=",")
-      errs.m$glmnet.pe <- NA
-      errs.m$glmnet.r.squared <- NA
       errs.m$vars <- paste(cur.vars, collapse=',')
       errs.m$n.squares <- n.squares
       errs.m$formula.len <- cur.formula.len

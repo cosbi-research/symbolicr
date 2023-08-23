@@ -14,7 +14,7 @@
 #' @param max.formula.len The maximum number of terms in the formula
 #' @param seed An (optional) seed for deterministic run
 #' @param fitness.fun The function that determine the fitness of a given formula. Defaults to `pe.r.squared.formula.len.fitness`
-#' @param transformations A list of potentially non-linear transformations that can be applied on top of the squares. Ex. `order 0, transformation=log10 = log10.a`
+#' @param transformations A list of potentially non-linear transformations that can be applied on top of the squares. Ex. `order 0, transformation=log10 = log10.a`. Input values are x and z, the array of numbers to be transformed (training set only), and the min max statistics (on the global dataset) respectively.
 #' @param custom.abs.mins A list of user-defined minimum values for dataset columns.
 #' @param glob.filepath Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.
 #' @param local.filepath Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.
@@ -80,8 +80,8 @@ genetic.search <- function(
     seed=NULL,
     fitness.fun=pe.r.squared.formula.len.fitness,
     transformations=list(
-      "log10"=function(x, z){ log10(0.1+abs(z)+x) },
-      "inv"=function(x, z){ 1/(0.1+abs(z)+x) }
+      "log10"=function(x, z){ log10(0.1+abs(z$min)+x) },
+      "inv"=function(x, z){ 1/(0.1+abs(z$min)+x) }
     ),
     custom.abs.mins=list(),
     glob.filepath=NULL,

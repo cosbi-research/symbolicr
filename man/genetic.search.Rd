@@ -12,10 +12,10 @@ genetic.search(
   seed = NULL,
   fitness.fun = pe.r.squared.formula.len.fitness,
   transformations = list(log10 = function(x, z) {
-     log10(0.1 + abs(z) + x)
- }, inv =
-    function(x, z) {
-     1/(0.1 + abs(z) + x)
+     log10(0.1 + abs(z$min) + x)
+ },
+    inv = function(x, z) {
+     1/(0.1 + abs(z$min) + x)
  }),
   custom.abs.mins = list(),
   glob.filepath = NULL,
@@ -46,7 +46,7 @@ genetic.search(
 
 \item{fitness.fun}{The function that determine the fitness of a given formula. Defaults to \code{pe.r.squared.formula.len.fitness}}
 
-\item{transformations}{A list of potentially non-linear transformations that can be applied on top of the squares. Ex. \verb{order 0, transformation=log10 = log10.a}}
+\item{transformations}{A list of potentially non-linear transformations that can be applied on top of the squares. Ex. \verb{order 0, transformation=log10 = log10.a}. Input values are x and z, the array of numbers to be transformed (training set only), and the min max statistics (on the global dataset) respectively.}
 
 \item{custom.abs.mins}{A list of user-defined minimum values for dataset columns.}
 

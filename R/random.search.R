@@ -12,7 +12,7 @@
 #' @param K The number of parts the dataset is split into for K-fold cross-validation.
 #' @param N The number of times the K-fold validation is repeated, shuffling the dataset row orders before each time.
 #' @param seed An (optional) seed for deterministic run
-#' @param transformations A list of potentially non-linear transformations that can be applied on top of the squares. Ex. `order 0, transformation=log10 = log10.a`
+#' @param transformations A list of potentially non-linear transformations that can be applied on top of the squares. Ex. `order 0, transformation=log10 = log10.a`. Input values are x and z, the array of numbers to be transformed (training set only), and the min max statistics (on the global dataset) respectively.
 #' @param custom.abs.mins A list of user-defined minimum values for dataset columns.
 #' @param maxiter Maximum number of genetic evolution epochs
 #' @param glob.filepath Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.
@@ -26,6 +26,15 @@
 #'
 #' @examples
 #' \dontrun{
+#'   transformations <- list(
+#'      "log10"=function(x, z){
+#'           log10(0.1+abs(z$min)+x)
+#'      },
+#'      "inv"=function(x, z){
+#'           1/(0.1+abs(z$min)+x)
+#'      }
+#'   )
+#'
 #'   new.sample.res <- random.search(
 #'      complete.X.df, l.F2,
 #'      n.squares=1,
@@ -44,8 +53,8 @@ random.search <- function(
     N=10,
     seed=NULL,
     transformations=list(
-      "log10"=function(x, z){ log10(0.1+abs(z)+x) },
-      "inv"=function(x, z){ 1/(0.1+abs(z)+x) }
+      "log10"=function(x, z){ log10(0.1+abs(z$min)+x) },
+      "inv"=function(x, z){ 1/(0.1+abs(z$min)+x) }
     ),
     custom.abs.mins=list(),
     maxiter=100,

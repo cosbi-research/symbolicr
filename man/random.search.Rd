@@ -13,10 +13,10 @@ random.search(
   N = 10,
   seed = NULL,
   transformations = list(log10 = function(x, z) {
-     log10(0.1 + abs(z) + x)
- }, inv =
-    function(x, z) {
-     1/(0.1 + abs(z) + x)
+     log10(0.1 + abs(z$min) + x)
+ },
+    inv = function(x, z) {
+     1/(0.1 + abs(z$min) + x)
  }),
   custom.abs.mins = list(),
   maxiter = 100,
@@ -42,7 +42,7 @@ random.search(
 
 \item{seed}{An (optional) seed for deterministic run}
 
-\item{transformations}{A list of potentially non-linear transformations that can be applied on top of the squares. Ex. \verb{order 0, transformation=log10 = log10.a}}
+\item{transformations}{A list of potentially non-linear transformations that can be applied on top of the squares. Ex. \verb{order 0, transformation=log10 = log10.a}. Input values are x and z, the array of numbers to be transformed (training set only), and the min max statistics (on the global dataset) respectively.}
 
 \item{custom.abs.mins}{A list of user-defined minimum values for dataset columns.}
 
@@ -66,6 +66,15 @@ Randomly sample and test different formulas with cross-validation.
 }
 \examples{
 \dontrun{
+  transformations <- list(
+     "log10"=function(x, z){
+          log10(0.1+abs(z$min)+x)
+     },
+     "inv"=function(x, z){
+          1/(0.1+abs(z$min)+x)
+     }
+  )
+
   new.sample.res <- random.search(
      complete.X.df, l.F2,
      n.squares=1,

@@ -22,3 +22,27 @@ A list with two values:
 \description{
 Normalize a dataset
 }
+\examples{
+\dontrun{
+best.vars <- c('inv.mul.patch_hyd_5.patch_hyd_5','mul.patch_ion_3.patch_pos','patch_pos_3')
+
+# parse variables
+parsed.vars <- symbolicr::parse.vars(best.vars, regressors, transformations)
+# standardize
+norm.res <- symbolicr::normalize(regressors.df, custom.mins=list())
+regressors.df.std <- norm.res$X.std
+regressors.mean.sd <-norm.res$mean.sd
+# compute regressors
+regressors.def <- symbolicr::compute.regressors(regressors.df.std, parsed.vars,
+                   transformations, regressors.mean.sd, regressors.min.values=NULL)
+regressors.min.values <- regressors.def$min.values
+formula.df <- regressors.def$regressors
+
+# extract coefficients of given formula
+dataset.std <- cbind(formula.df, y)
+cur.formula.str <- paste0('y',"~",paste(best.vars, collapse=' + '))
+base.lm <- lm(as.formula(base.formula), data=dataset.std)
+base.lm$coefficients
+}
+
+}

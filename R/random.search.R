@@ -83,7 +83,8 @@ random.search <- function(
     prev.sample.res <- readRDS(glob.filepath)
     # restore from previously interrupted run
     if(file.exists(local.filepath)){
-      prev.sample.res <- rbind(prev.sample.res, readRDS(local.filepath))
+      new.sample.res <- readRDS(local.filepath)
+      prev.sample.res <- rbind(prev.sample.res, new.sample.res)
     }
     prev.vars<-sort(prev.sample.res$vars, decreasing=F)
   }

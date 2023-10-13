@@ -136,6 +136,9 @@ random.search <- function(
     sample.res<-do.call(rbind,l)
     new.sample.res <- rbind(new.sample.res, sample.res)
     if(memoization){
+      if(file.exists(local.filepath)){
+        new.sample.res <- rbind(readRDS(local.filepath), new.sample.res)
+      }
       saveRDS(new.sample.res, local.filepath)
     }
     cur.start <- cur.start + memoization.interval

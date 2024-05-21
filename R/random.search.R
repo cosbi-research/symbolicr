@@ -18,7 +18,7 @@
 #' @param glob.filepath Has effect only if memoization=TRUE. The path to an rDdata object containing the results of potentially multiple independent previous run.
 #' @param local.filepath Has effect only if memoization=TRUE. The path to an rData object where the results of the current run will be stored. If it already exists, the new results will be appended.
 #' @param memoization.interval The number of formulas to sample at each iteration, and the frequency of update of `res.filepath` if memoization=TRUE.
-#' @param memoization If TRUE test results will be stored in `res.filepath`
+#' @param memoization If TRUE test results will be stored in `local.filepath`
 #' @param cv.norm Normalize regressors after train-validation split in inner cross-validation loop.
 #'
 #' @return A data.frame of formulas and the corresponding cross-validation performance measures (R-squared, absolute relative error, max cooks distance). See also `empty.sample`.
@@ -119,13 +119,18 @@ random.search <- function(
           data=experiments, FUN=mean)
 
         errs.m$base.max.cooksd.name <- paste(unique(experiments$base.max.cooksd.name), collapse=",")
-        errs.m$vars <- paste(cur.vars, collapse=',')
+        errs.m$vars <- cur.vars.str
         errs.m$n.squares <- n.squares
         errs.m$formula.len <- formula.len
 
         errs.m <- errs.m[, c('base.pe','base.cor','base.r.squared',
                              'base.max.pe', 'base.iqr.pe', 'base.max.cooksd', 'base.max.cooksd.name',
                              'vars', 'n.squares', 'formula.len')]
+        if(memoization){
+          # insert sort into prev.vars                     
+          point <- Position(function(v) v < cur.vars.str, prev.vars, right=TRUE)
+          prev.vars <<- append(prev.vars, cur.vars.str, after=point)
+        }
       }else{
         print("NOTICE: Skipping already computed..")
         errs.m <- empty.sample()

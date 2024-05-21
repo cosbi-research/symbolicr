@@ -232,7 +232,11 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.sq
     base.pe<-abs(df$real-df$base.pred)/abs(df$real)
     cv.results[['base.pe']] <- stats::median( base.pe )
     cv.results[['base.max.pe']] <- max( base.pe )
-    cv.results[['base.iqr.pe']] <- stats::IQR( base.pe )
+    cv.results[['base.iqr.pe']] <- tryCatch({
+      stats::IQR( base.pe )
+    }, error=function(e){
+      NA
+    })
     cv.results[['base.max.cooksd']] <- max.base.cooksd
     cv.results[['base.max.cooksd.name']] <- max.base.outlayer.name
 

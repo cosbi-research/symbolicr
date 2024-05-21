@@ -129,8 +129,9 @@ genetic.search <- function(
   }
   complete.regressors <- c(complete.regressors, compute.transformations.names(complete.regressors, transformations))
 
-
   regressors.len <- length(complete.regressors)
+  print(paste0("## Total number of single terms: ", regressors.len))
+
   # cross-validation parameters
   ns <- nrow(complete.X.df)
   optim_fun <- function(x, dt.sample.res, memoization, max.formula.len){

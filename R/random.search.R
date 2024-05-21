@@ -120,6 +120,9 @@ random.search <- function(
         if(memoization){
           # insert sort into prev.vars
           point <- Position(function(v) v < cur.vars.str, prev.vars, right=TRUE)
+          if(is.na(point)){
+            point=length(prev.vars)
+          }
           prev.vars <<- append(prev.vars, cur.vars.str, after=point)
         }
       }else{

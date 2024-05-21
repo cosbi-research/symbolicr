@@ -11,7 +11,6 @@ cross.validate(
   custom.abs.mins,
   K,
   N,
-  n.squares,
   transformations,
   cv.norm
 )
@@ -28,8 +27,6 @@ cross.validate(
 \item{K}{The number of parts the dataset is split into for K-fold cross-validation.}
 
 \item{N}{The number of times the K-fold validation is repeated, shuffling the dataset row orders before each time.}
-
-\item{n.squares}{The maximum order of polynomials the \code{cur.vars} formula contains.}
 
 \item{transformations}{A list of potentially non-linear transformations allowed in \code{cur.vars}.}
 
@@ -52,7 +49,6 @@ Test using K-fold cross-validation repeated N times
                       custom.abs.mins=list(),
                       K=7,
                       N=10,
-                      n.squares=0,
                       transformations=list(
                             "log10"=function(x, min.val){
                                            log10(0.1+abs(min.val)+x)
@@ -68,8 +64,7 @@ Test using K-fold cross-validation repeated N times
                       cur.vars=c('inv.mul.patch_hyd_2.patch_hyd_2','patch_pos_.'),
                       custom.abs.mins=list(),
                       K=7,
-                      N=10,
-                      n.squares=1
+                      N=10
                     )
 
      # summarize cross-validation results by averaging

@@ -117,18 +117,7 @@ genetic.search <- function(
   }
 
   # compute regressors on full dataset
-  regressors <- names(complete.X.df)
-  complete.regressors <- regressors
-  if(n.squares>0){
-    l <- list()
-    l[[1]] <- regressors;
-    for(i in seq(n.squares)){
-      l[[i+1]] <- complete.square.names(l[[i]], regressors)
-    }
-    complete.regressors <- unlist(l)
-  }
-  complete.regressors <- c(complete.regressors, compute.transformations.names(complete.regressors, transformations))
-
+  complete.regressors <- compute.regressors.names(complete.X.df, n.squares, transformations)
   regressors.len <- length(complete.regressors)
   print(paste0("## Total number of single terms: ", regressors.len))
 
@@ -154,7 +143,7 @@ genetic.search <- function(
       prev.res <- new.sample.res[new.sample.res$vars==cur.vars.str, ]
 
     if(nrow(prev.res) == 0){
-      experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N, n.squares,
+      experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N,
                                     transformations, cv.norm)
 
       errs.m <- stats::aggregate(

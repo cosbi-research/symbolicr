@@ -2,6 +2,7 @@
 
 export(comb.search)
 export(compute.regressors)
+export(compute.regressors.names)
 export(cross.validate)
 export(empty.sample)
 export(genetic.search)
@@ -10,3 +11,4 @@ export(normalize)
 export(parse.vars)
 export(pe.r.squared.formula.len.fitness)
 export(random.search)
+export(test.formula)

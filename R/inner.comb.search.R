@@ -19,15 +19,13 @@ inner.comb.search <- function(
     cur.vars.str <- paste(sort(cur.vars), collapse=",")
     print(paste0("Regression on ", cur.vars.str))
     cur.vars.parsed <- parse.vars(cur.vars, names(complete.X.df), transformations)
-    cur.n.squares <- max(sapply(cur.vars.parsed, function(cur.var.parsed) length(cur.var.parsed$prods)))
+    cur.n.squares <- max(sapply(cur.vars.parsed, function(cur.var.parsed) length(cur.var.parsed$prods)))-1
 
     experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N,
-                                  cur.n.squares,
                                   transformations, cv.norm=cv.norm)
-
     errs.m <- stats::aggregate(
       cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,
-      data=experiments, FUN=mean)
+      data=experiments, FUN=mean, na.action = 'na.pass')
 
     errs.m$base.max.cooksd.name <- paste(unique(experiments$base.max.cooksd.name), collapse=",")
     errs.m$vars <- paste(cur.vars, collapse=',')

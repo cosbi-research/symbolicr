@@ -54,7 +54,7 @@ random.search(
 
 \item{memoization.interval}{The number of formulas to sample at each iteration, and the frequency of update of \code{res.filepath} if memoization=TRUE.}
 
-\item{memoization}{If TRUE test results will be stored in \code{res.filepath}}
+\item{memoization}{If TRUE test results will be stored in \code{local.filepath}}
 
 \item{cv.norm}{Normalize regressors after train-validation split in inner cross-validation loop.}
 }

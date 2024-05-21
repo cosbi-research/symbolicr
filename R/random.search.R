@@ -63,17 +63,8 @@ random.search <- function(
     memoization.interval=50,
     memoization=F,
     cv.norm=F){
-  regressors <- names(complete.X.df)
-  complete.regressors <- regressors
-  if(n.squares>0){
-    l <- list()
-    l[[1]] <- regressors;
-    for(i in seq(n.squares)){
-      l[[i+1]] <- complete.square.names(l[[i]], regressors)
-    }
-    complete.regressors <- unlist(l)
-  }
-  complete.regressors <- c(complete.regressors, compute.transformations.names(complete.regressors, transformations))
+
+  complete.regressors <- compute.regressors.names(complete.X.df, n.squares, transformations)
   regressors.len <- length(complete.regressors)
   tot.rows <- choose(regressors.len,formula.len)
 
@@ -90,9 +81,9 @@ random.search <- function(
   }
 
   cur.start <- 0
-
   # COMPLETELY RANDOMIZED ALGORITHM, WITH 'MANUAL' OPTIMIZATION AT THE END
   while(cur.start < maxiter && cur.start < tot.rows){
+
     max.r.comb <- RcppAlgos::comboSample(complete.regressors, formula.len, n=min(tot.rows, memoization.interval),
                                          nThreads = 2, seed=seed)# seed=seed)
 
@@ -111,7 +102,7 @@ random.search <- function(
         res=list(flag='missing')
       }
       if(res$flag != 'Found'){
-        experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N, n.squares,
+        experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N,
                                       transformations, cv.norm)
 
         errs.m <- stats::aggregate(
@@ -127,7 +118,7 @@ random.search <- function(
                              'base.max.pe', 'base.iqr.pe', 'base.max.cooksd', 'base.max.cooksd.name',
                              'vars', 'n.squares', 'formula.len')]
         if(memoization){
-          # insert sort into prev.vars                     
+          # insert sort into prev.vars
           point <- Position(function(v) v < cur.vars.str, prev.vars, right=TRUE)
           prev.vars <<- append(prev.vars, cur.vars.str, after=point)
         }

@@ -8,7 +8,6 @@
 #' @param custom.abs.mins A list of user-defined minimum values for dataset columns.
 #' @param K The number of parts the dataset is split into for K-fold cross-validation.
 #' @param N The number of times the K-fold validation is repeated, shuffling the dataset row orders before each time.
-#' @param n.squares The maximum order of polynomials the `cur.vars` formula contains.
 #' @param transformations A list of potentially non-linear transformations allowed in `cur.vars`.
 #' @param cv.norm Normalize regressors after train-validation split in inner cross-validation loop.
 #'
@@ -26,7 +25,6 @@
 #'                       custom.abs.mins=list(),
 #'                       K=7,
 #'                       N=10,
-#'                       n.squares=0,
 #'                       transformations=list(
 #'                             "log10"=function(x, min.val){
 #'                                            log10(0.1+abs(min.val)+x)
@@ -42,8 +40,7 @@
 #'                       cur.vars=c('inv.mul.patch_hyd_2.patch_hyd_2','patch_pos_.'),
 #'                       custom.abs.mins=list(),
 #'                       K=7,
-#'                       N=10,
-#'                       n.squares=1
+#'                       N=10
 #'                     )
 #'
 #'      # summarize cross-validation results by averaging
@@ -54,7 +51,7 @@
 #'                )
 #'}
 #'
-cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, n.squares, transformations, cv.norm){
+cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, transformations, cv.norm){
   regressors <- names(cur.dataset)
   dataset.len <- nrow(cur.dataset)
   predictors.len <- length(cur.vars)

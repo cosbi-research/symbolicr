@@ -203,9 +203,13 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
 
     base.cooksd <- stats::cooks.distance(t.base.lm)
     max.base.cooksd <- base.cooksd[which(base.cooksd==max(base.cooksd))]
-    if(length(max.base.cooksd)>0)
+    l.max.base.cooksd <- length(max.base.cooksd)
+    if(l.max.base.cooksd==1){
       max.base.outlayer.name <- names(max.base.cooksd)
-    else{
+    }else if(l.max.base.cooksd>1){
+      max.base.cooksd <- max.base.cooksd[1]
+      max.base.outlayer.name <- names(max.base.cooksd)[1]
+    }else{
       max.base.cooksd <- 0
       max.base.outlayer.name <- ""
     }

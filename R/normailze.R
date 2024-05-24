@@ -39,9 +39,9 @@ normalize <- function(X.df, custom.mins){
 
   norm.values<-lapply(regressors, function(name){
     col <- X.df[[name]]
-    colmean<-mean(col)
-    colsd<-stats::sd(col)
-    std.min.eps <- abs( min((col - colmean)/colsd) )
+    colmean<-mean(col, na.rm = T)
+    colsd<-stats::sd(col, na.rm = T)
+    std.min.eps <- abs( min((col - colmean)/colsd, na.rm = T) )
     if(name %in% names(custom.mins)){
       std.min.eps <- custom.mins[[name]]
     }
@@ -55,8 +55,8 @@ normalize <- function(X.df, custom.mins){
 
   df1<- as.data.frame( lapply(regressors, FUN=function(name){
     col <- X.df[[name]]
-    colmean<-mean(col)
-    colsd<-stats::sd(col)
+    colmean<-mean(col, na.rm = T)
+    colsd<-stats::sd(col, na.rm = T)
 
     (col - colmean)/colsd
   }) )

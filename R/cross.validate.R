@@ -185,8 +185,10 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
 
     # get overall R^2 for this prediction
     real.df <- data.frame(BioReg=row.names(cur.dataset), real=y)
-    df <- merge(cv.results,real.df, by='BioReg', sort=F)
+    df <- merge(cv.results,real.df, by='BioReg', sort=F, all=F)
     row.names(df) <- df$BioReg
+    # remove NA
+    df.nona <- df[!is.na(df$base.pred), ]
 
     # evaluate overall R^2 of K-fold crossvalidation
     #t.glmnet.lm <- lm(real~glmnet.pred, data=df)
@@ -194,10 +196,10 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
     #t.dt.lm <- lm(real~dt.pred, data=df)
     #s.t.dt.lm<-summary(t.dt.lm)
 
-    t.base.lm <- stats::lm(real~base.pred, data=df)
+    t.base.lm <- stats::lm(real~base.pred, data=df.nona)
     #s.t.base.lm<-summary(t.base.lm)
-    base.lm.cor <- stats::cor(df$base.pred, df$real)
-    base.lm.r.squared <- 1 - sum((df$base.pred-df$real)^2) / sum((df$real - mean(df$real))^2)
+    base.lm.cor <- stats::cor(df.nona$base.pred, df.nona$real, use="pairwise.complete.obs")
+    base.lm.r.squared <- 1 - sum((df.nona$base.pred-df$real)^2, na.rm = T) / sum((df.nona$real - mean(df$real))^2, na.rm = T)
     # https://www.statology.org/adjusted-r-squared-interpretation/
     #base.lm.adj.r.squared <- 1 - ((1-base.lm.r.squared)*(dataset.len-1)/(dataset.len-predictors.len-1))
 

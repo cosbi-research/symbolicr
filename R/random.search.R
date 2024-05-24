@@ -107,7 +107,7 @@ random.search <- function(
 
         errs.m <- stats::aggregate(
           cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,
-          data=experiments, FUN=mean)
+          data=experiments, FUN=mean, na.rm=TRUE, na.action=NULL)
 
         errs.m$base.max.cooksd.name <- paste(unique(experiments$base.max.cooksd.name), collapse=",")
         errs.m$vars <- cur.vars.str

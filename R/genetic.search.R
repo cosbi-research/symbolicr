@@ -144,7 +144,7 @@ genetic.search <- function(
 
     if(nrow(prev.res) == 0){
       experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N,
-                                    transformations, cv.norm)
+                                    transformations, cv.norm, na.rm=TRUE, na.action=NULL)
 
       errs.m <- stats::aggregate(
         cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,

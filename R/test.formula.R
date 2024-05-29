@@ -56,8 +56,6 @@ test.formula <- function(
 
   errs.m$base.max.cooksd.name <- paste(unique(experiments$base.max.cooksd.name), collapse=",")
   errs.m$vars <- cur.vars.str
-  errs.m <- errs.m[, c('base.pe','base.cor','base.r.squared',
-                       'base.max.pe', 'base.iqr.pe', 'base.max.cooksd', 'base.max.cooksd.name',
-                       'vars', 'n.squares', 'formula.len')]
+
   return(errs.m)
 }

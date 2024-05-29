@@ -212,7 +212,7 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
       max.base.cooksd <- max.base.cooksd[1]
       max.base.outlayer.name <- names(max.base.cooksd)[1]
     }else{
-      max.base.cooksd <- 0
+      max.base.cooksd <- NA
       max.base.outlayer.name <- ""
     }
 

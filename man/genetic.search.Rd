@@ -11,10 +11,10 @@ genetic.search(
   max.formula.len = 4,
   seed = NULL,
   fitness.fun = pe.r.squared.formula.len.fitness,
-  transformations = list(log10 = function(x, z) {
+  transformations = list(log10 = function(rdf, x, z) {
      log10(0.1 + abs(z$min) + x)
- },
-    inv = function(x, z) {
+
+    }, inv = function(rdf, x, z) {
      1/(0.1 + abs(z$min) + x)
  }),
   custom.abs.mins = list(),

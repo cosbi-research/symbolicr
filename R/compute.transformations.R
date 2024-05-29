@@ -6,7 +6,7 @@ compute.transformations <- function(X.df.std, transformations, regressors.min.va
     new.regressors <- as.data.frame(lapply(names(transformations), function(prefix){
       transf <- transformations[[prefix]]
       # create new column
-      transf(X.df.std[[v]], regressors.min.values[[v]]$min)
+      transf(X.df.std, X.df.std[[v]], regressors.min.values[[v]]$min)
     }))
     names(new.regressors) <- paste(names(transformations), v, sep=".")
     return(new.regressors)

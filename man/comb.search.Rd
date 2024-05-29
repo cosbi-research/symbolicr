@@ -12,10 +12,10 @@ comb.search(
   K = 7,
   N = 10,
   seed = NULL,
-  transformations = list(log10 = function(x, z) {
+  transformations = list(log10 = function(rdf, x, z) {
      log10(0.1 + abs(z) + x)
- }, inv =
-    function(x, z) {
+ },
+    inv = function(rdf, x, z) {
      1/(0.1 + abs(z) + x)
  }),
   custom.abs.mins = list(),

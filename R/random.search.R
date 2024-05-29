@@ -27,10 +27,16 @@
 #' @examples
 #' \dontrun{
 #'   transformations <- list(
-#'      "log10"=function(x, z){
+#'      # rdf = complete regressors/predictors data.frame
+#'      # x = the column on which we have to compute the non-linearity
+#'      # z = list("min"=min(vals),"absmin"=min(abs(vals)),"absmax"=max(abs(vals)),
+#'      #           zero in original space projected in normalized space,
+#'      #           that is: -mean(vals)/sd(vals)
+#'      #          "projzero"=prjzero)
+#'      "log10"=function(rdf, x, z){
 #'           log10(0.1+abs(z$min)+x)
 #'      },
-#'      "inv"=function(x, z){
+#'      "inv"=function(rdf, x, z){
 #'           1/(0.1+abs(z$min)+x)
 #'      }
 #'   )
@@ -41,7 +47,9 @@
 #'      formula.len=3,
 #'      maxiter=1000000,
 #'      glob.filepath = base.filepath,
-#'      res.filepath = res.filepath, memoization=T
+#'      res.filepath = res.filepath,
+#'      transformations = transformations,
+#'      memoization=T
 #'  )
 #'}
 random.search <- function(
@@ -53,8 +61,8 @@ random.search <- function(
     N=10,
     seed=NULL,
     transformations=list(
-      "log10"=function(x, z){ log10(0.1+abs(z$min)+x) },
-      "inv"=function(x, z){ 1/(0.1+abs(z$min)+x) }
+      "log10"=function(rdf, x, z){ log10(0.1+abs(z$min)+x) },
+      "inv"=function(rdf, x, z){ 1/(0.1+abs(z$min)+x) }
     ),
     custom.abs.mins=list(),
     maxiter=100,
@@ -107,7 +115,7 @@ random.search <- function(
 
         errs.m <- stats::aggregate(
           cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,
-          data=experiments, FUN=mean, na.rm=TRUE, na.action=NULL)
+          data=experiments, FUN=mean, na.action = 'na.pass')
 
         errs.m$base.max.cooksd.name <- paste(unique(experiments$base.max.cooksd.name), collapse=",")
         errs.m$vars <- cur.vars.str

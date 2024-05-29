@@ -80,8 +80,8 @@ genetic.search <- function(
     seed=NULL,
     fitness.fun=pe.r.squared.formula.len.fitness,
     transformations=list(
-      "log10"=function(x, z){ log10(0.1+abs(z$min)+x) },
-      "inv"=function(x, z){ 1/(0.1+abs(z$min)+x) }
+      "log10"=function(rdf, x, z){ log10(0.1+abs(z$min)+x) },
+      "inv"=function(rdf, x, z){ 1/(0.1+abs(z$min)+x) }
     ),
     custom.abs.mins=list(),
     glob.filepath=NULL,
@@ -144,7 +144,7 @@ genetic.search <- function(
 
     if(nrow(prev.res) == 0){
       experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N,
-                                    transformations, cv.norm, na.rm=TRUE, na.action=NULL)
+                                    transformations, cv.norm)
 
       errs.m <- stats::aggregate(
         cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,

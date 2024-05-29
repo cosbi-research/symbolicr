@@ -26,8 +26,8 @@ comb.search <- function(
     N=10,
     seed=NULL,
     transformations=list(
-      "log10"=function(x, z){ log10(0.1+abs(z)+x) },
-      "inv"=function(x, z){ 1/(0.1+abs(z)+x) }
+      "log10"=function(rdf, x, z){ log10(0.1+abs(z)+x) },
+      "inv"=function(rdf, x, z){ 1/(0.1+abs(z)+x) }
     ),
     custom.abs.mins=list(),
     cv.norm=F

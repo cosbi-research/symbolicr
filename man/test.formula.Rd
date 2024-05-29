@@ -11,10 +11,10 @@ test.formula(
   custom.abs.mins,
   K,
   N,
-  transformations = list(log10 = function(x, z) {
+  transformations = list(log10 = function(rdf, x, z) {
      log10(0.1 + abs(z$min) + x)
- },
-    inv = function(x, z) {
+
+    }, inv = function(rdf, x, z) {
      1/(0.1 + abs(z$min) + x)
  }),
   cv.norm = T
@@ -52,10 +52,10 @@ Test using K-fold cross-validation repeated N times
                       K=7,
                       N=10,
                       transformations=list(
-                            "log10"=function(x, min.val){
+                            "log10"=function(rdf, x, min.val){
                                            log10(0.1+abs(min.val)+x)
                                     },
-                            "inv"=function(x, min.val){
+                            "inv"=function(rdf, x, min.val){
                                            1/(0.1+abs(min.val)+x)
                                   }
                       )

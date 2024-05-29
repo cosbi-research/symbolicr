@@ -25,10 +25,10 @@
 #'                       K=7,
 #'                       N=10,
 #'                       transformations=list(
-#'                             "log10"=function(x, min.val){
+#'                             "log10"=function(rdf, x, min.val){
 #'                                            log10(0.1+abs(min.val)+x)
 #'                                     },
-#'                             "inv"=function(x, min.val){
+#'                             "inv"=function(rdf, x, min.val){
 #'                                            1/(0.1+abs(min.val)+x)
 #'                                   }
 #'                       )
@@ -37,8 +37,8 @@
 test.formula <- function(
     complete.X.df, y, cur.vars, custom.abs.mins, K, N,
     transformations=list(
-      "log10"=function(x, z){ log10(0.1+abs(z$min)+x) },
-      "inv"=function(x, z){ 1/(0.1+abs(z$min)+x) }
+      "log10"=function(rdf, x, z){ log10(0.1+abs(z$min)+x) },
+      "inv"=function(rdf, x, z){ 1/(0.1+abs(z$min)+x) }
     ),
     cv.norm=T
 ){
@@ -49,10 +49,9 @@ test.formula <- function(
 
   experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N,
                                 transformations, cv.norm)
-
   errs.m <- stats::aggregate(
     cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,
-    data=experiments, FUN=mean)
+    data=experiments, FUN=mean, na.action="na.pass")
 
   errs.m$base.max.cooksd.name <- paste(unique(experiments$base.max.cooksd.name), collapse=",")
   errs.m$vars <- cur.vars.str

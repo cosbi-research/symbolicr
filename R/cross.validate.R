@@ -124,9 +124,10 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
       base.lm <- tryCatch({ stats::lm(stats::as.formula(cur.formula.str), data=df.std) },
                           error=function(e){
                               # use intercept-only model
-                              stats::lm(y~1, data=df.std)
+                              stop(paste0("Regressors contains NaN/Inf values in formula '",cur.formula.str,"': ", e))
+                              #stats::lm(y~1, data=df.std)
                           },
-                          message=paste0("Regressors contains NaN/Inf values in formula '",cur.formula.str,"': fallback to intercept-only regression"))
+                          message=paste0("Regressors contains NaN/Inf values in formula '",cur.formula.str,"'"))
       s.base.lm <- summary(base.lm)
       s.df <- as.data.frame(s.base.lm$coefficients)
       base.full.coef <-as.data.frame(s.df$Estimate)
@@ -189,7 +190,6 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
     row.names(df) <- df$BioReg
     # remove NA
     df.nona <- df[!is.na(df$base.pred), ]
-
     # evaluate overall R^2 of K-fold crossvalidation
     #t.glmnet.lm <- lm(real~glmnet.pred, data=df)
     #s.t.glmnet.lm<-summary(t.glmnet.lm)
@@ -199,7 +199,7 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
     t.base.lm <- stats::lm(real~base.pred, data=df.nona)
     #s.t.base.lm<-summary(t.base.lm)
     base.lm.cor <- stats::cor(df.nona$base.pred, df.nona$real, use="pairwise.complete.obs")
-    base.lm.r.squared <- 1 - sum((df.nona$base.pred-df$real)^2, na.rm = T) / sum((df.nona$real - mean(df$real))^2, na.rm = T)
+    base.lm.r.squared <- 1 - sum((df.nona$base.pred-df.nona$real)^2, na.rm = T) / sum((df.nona$real - mean(df.nona$real))^2, na.rm = T)
     # https://www.statology.org/adjusted-r-squared-interpretation/
     #base.lm.adj.r.squared <- 1 - ((1-base.lm.r.squared)*(dataset.len-1)/(dataset.len-predictors.len-1))
 
@@ -232,7 +232,7 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
 
     cv.results[['base.cor']] <- base.lm.cor
     cv.results[['base.r.squared']] <- base.lm.r.squared
-    base.pe<-abs(df$real-df$base.pred)/abs(df$real)
+    base.pe<-abs(df.nona$real-df.nona$base.pred)/abs(df.nona$real)
     cv.results[['base.pe']] <- stats::median( base.pe )
     cv.results[['base.max.pe']] <- max( base.pe )
     cv.results[['base.iqr.pe']] <- tryCatch({

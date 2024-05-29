@@ -12,10 +12,10 @@ random.search(
   K = 7,
   N = 10,
   seed = NULL,
-  transformations = list(log10 = function(x, z) {
+  transformations = list(log10 = function(rdf, x, z) {
      log10(0.1 + abs(z$min) + x)
- },
-    inv = function(x, z) {
+
+    }, inv = function(rdf, x, z) {
      1/(0.1 + abs(z$min) + x)
  }),
   custom.abs.mins = list(),
@@ -67,10 +67,16 @@ Randomly sample and test different formulas with cross-validation.
 \examples{
 \dontrun{
   transformations <- list(
-     "log10"=function(x, z){
+     # rdf = complete regressors/predictors data.frame
+     # x = the column on which we have to compute the non-linearity
+     # z = list("min"=min(vals),"absmin"=min(abs(vals)),"absmax"=max(abs(vals)),
+     #           zero in original space projected in normalized space,
+     #           that is: -mean(vals)/sd(vals)
+     #          "projzero"=prjzero)
+     "log10"=function(rdf, x, z){
           log10(0.1+abs(z$min)+x)
      },
-     "inv"=function(x, z){
+     "inv"=function(rdf, x, z){
           1/(0.1+abs(z$min)+x)
      }
   )
@@ -81,7 +87,9 @@ Randomly sample and test different formulas with cross-validation.
      formula.len=3,
      maxiter=1000000,
      glob.filepath = base.filepath,
-     res.filepath = res.filepath, memoization=T
+     res.filepath = res.filepath,
+     transformations = transformations,
+     memoization=T
  )
 }
 }

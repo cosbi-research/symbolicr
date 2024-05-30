@@ -124,7 +124,6 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
       base.lm <- tryCatch({ stats::lm(stats::as.formula(cur.formula.str), data=df.std) },
                           error=function(e){
                               # use intercept-only model
-                              print(df.std)
                               stop(paste0("Regressors contains NaN/Inf values in formula '",cur.formula.str,"': ", e))
                               #stats::lm(y~1, data=df.std)
                           },

@@ -15,13 +15,10 @@ compute.regressors.names <- function(complete.X.df, n.squares, transformations){
   regressors <- names(complete.X.df)
   complete.regressors <- regressors
   if(n.squares>0){
-    l <- list()
-    l[[1]] <- regressors;
-    for(i in seq(n.squares)){
-      l[[i+1]] <- complete.square.names(l[[i]], regressors)
-    }
-    complete.regressors <- unlist(l)
+    l <- lapply(seq(n.squares+1), function(i){regressors})
+    complete.regressors <- complete.square.names(l)
   }
-  complete.regressors <- c(complete.regressors, compute.transformations.names(complete.regressors, transformations))
+  if(length(transformations)>0)
+    complete.regressors <- c(complete.regressors, compute.transformations.names(complete.regressors, transformations))
   return(complete.regressors)
 }

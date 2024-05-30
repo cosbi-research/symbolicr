@@ -1,11 +1,25 @@
-complete.square.names <- function(regressors, base.regressors){
-  combinations<-expand.grid(base.regressors,regressors)
+complete.square.names <- function(regressors.list){
+  combinations<-expand.grid(regressors.list)
   combinations[] <- t(apply(combinations, MARGIN=1, FUN=sort))
   combinations <- unique(combinations)
+  len <- ncol(combinations)
 
-  new.regressors <- do.call(c, mapply(function(v1, v2){
-    ifelse(startsWith(v1,"mul."), paste0('mul.',v2,'.',v1), paste0('mul.',v1,'.',v2))
-  }, v1=combinations$Var1, v2=combinations$Var2, SIMPLIFY=F))
+  new.regressors <- apply(combinations, MARGIN=1, FUN=function(row){
+    rrow <- rev(row)
+    var <- ""
+    for(i in seq(len)){
+      if(i == 1){
+        if(len == 1){
+          var <- rrow[i]
+        }else if(len >= 2){
+          var <- paste0('mul.',rrow[i+1],'.',rrow[i])
+        }
+      }else if(i < len){
+        var <- paste0('mul.',rrow[i+1],'.', var)
+      }
+    }
+    return(var)
+  })
   names(new.regressors)<-NULL
 
   return(new.regressors)

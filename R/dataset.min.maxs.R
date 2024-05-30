@@ -22,7 +22,7 @@ dataset.min.maxs <- function(X.df.std, X.mean.sd){
       prjzero <- -X.mean.sd[[v]]$mean/X.mean.sd[[v]]$sd
     else
       prjzero <- 0
-    list("min"=min(vals),"absmin"=min(abs(vals)),"absmax"=max(abs(vals)),
+    list("min"=min(vals, na.rm=T),"absmin"=min(abs(vals), na.rm=T),"absmax"=max(abs(vals), na.rm=T),
          # zero in original space projected in std space
          "projzero"=prjzero)
   })

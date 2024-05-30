@@ -23,7 +23,10 @@ parse.vars <- function(cur.vars, base.regressors, transformations=list()){
     # at top-level we may have a transformation
     cur.transformation.name <- NULL
     var <- curvar
-    for(transname in names(transformations)){
+    tnames <- names(transformations)
+    # sort so that the longest is tried first
+    tnames <- tnames[order(nchar(tnames), tnames, decreasing = T)]
+    for(transname in tnames){
       m <- regexpr(paste0(transname, '.'), curvar, fixed=T)
       match.start <- as.integer(m)
       if(match.start > 0){

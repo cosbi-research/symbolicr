@@ -7,8 +7,7 @@
 comb.search(
   complete.X.df,
   y,
-  formulas.l,
-  formula.len = 3,
+  combinations,
   K = 7,
   N = 10,
   seed = NULL,
@@ -27,9 +26,7 @@ comb.search(
 
 \item{y}{The independent variable to be predicted with the formula}
 
-\item{formulas.l}{The list of formulas whose terms will be considered}
-
-\item{formula.len}{The number of terms in the formulas that will be randomly sampled.}
+\item{combinations}{A data.frame of combinations of shape (num.combinations, formula.len)}
 
 \item{K}{The number of parts the dataset is split into for K-fold cross-validation.}
 
@@ -49,4 +46,28 @@ A data.frame of formulas and the corresponding cross-validation performance meas
 \description{
 Given a set of formulas, this function systematically evaluates
 all combinations of formula terms, of a given length.
+}
+\examples{
+\dontrun{
+base.filepath <- paste0('regression/regression',type,'.exploration.l',formula.len,'.rData')
+res <- readRDS(base.filepath)
+complete.regressors <- compute.regressors.names(regressors.df, n.squares, transformations)
+# compute combinations up to length formula.len
+regressors.list <- lapply(seq(formula.len), function(x) complete.regressors)
+combinations <- RcppAlgos::comboGrid(regressors.list, repetition = F)
+combinations <- apply(combinations, MARGIN=1, FUN=function(row){
+  paste(row, collapse=",")
+})
+names(combinations)<-NULL
+# get missing formulas
+missing <- setdiff(combinations, res$vars)
+# compute exaustively all missing formulas
+res.new <- comb.search(regressors.df, l.Fn,
+                       # data.frame of n.missing.values x formula.len
+                       combinations=t(as.data.frame(strsplit(missing,",",fixed=T))),
+                       K=K, N=N, seed=seed,
+                       transformations=transformations, custom.abs.mins=list(), cv.norm=T)
+res <- rbind(res, res.new)
+saveRDS(res, base.filepath)
+}
 }

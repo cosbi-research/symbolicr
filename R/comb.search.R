@@ -1,4 +1,4 @@
-#' Explore all combinations of formula terms
+#' Explore given combinations of formula terms
 #'
 #' Given a set of formulas, this function systematically evaluates
 #' all combinations of formula terms, of a given length.

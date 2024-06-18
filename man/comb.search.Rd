@@ -2,7 +2,7 @@
 % Please edit documentation in R/comb.search.R
 \name{comb.search}
 \alias{comb.search}
-\title{Explore all combinations of formula terms}
+\title{Explore given combinations of formula terms}
 \usage{
 comb.search(
   complete.X.df,

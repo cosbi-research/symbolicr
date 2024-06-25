@@ -16,3 +16,7 @@ Imports:
     RcppAlgos,
     stats,
     stringr
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

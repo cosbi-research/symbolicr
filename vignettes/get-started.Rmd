@@ -1,0 +1,159 @@
+---
+title: "get-started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{get-started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Find non-linear formulas that fits your input data. 
+You can systematically explore and memoize the possible formulas and it's cross-validation performance, in an incremental fashon. 
+Two interoperable search functions are available: 
+
+- `random.search` performs a random exploration, 
+- `genetic.search` employs a genetic optimization algorithm
+- `exaustive.search` explore all the space not already explored (WARNING may take a long time and doesn't have intermediate save points.)
+
+## Load the library and set-up the data
+
+```{r setup}
+library(symbolicr)
+
+x1<-runif(100, min=2, max=67)
+x2<-runif(100, min=0.01, max=0.1)
+
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+
+X <- data.frame(x1=x1, x2=x2)
+```
+
+## Define hyper-parameters
+
+```
+l1.filepath <- paste0('regression/regression',type,'.exploration.l1.rData')
+# create file
+saveRDS(empty.sample(), l1.filepath)
+
+best.n.squares <- n.squares <- 1
+best.formula.len <- formula.len <- 2
+seed=1010
+
+K=15
+N=30
+max.formula.len=2
+```
+
+## Define rData file for checkpoint save
+
+Used only in genetic and random search
+
+```
+if(seed > 0){
+  res.filepath <- file.path(out.folder, paste0('regression',type,'.exploration.fl.',formula.len,'.ord.',n.squares,'seed.',seed,'.rData'))
+}
+```
+
+## Define non-linear transformations
+
+- `rdf` is the full dataset
+- `x` is the variable to which we should apply the non-linearity
+- `z` is a list with `min` and `absmin` fields
+
+```
+transformations <- list(
+  "log"=function(rdf, x, z){
+    log10(x)
+  },
+  "log10"=function(rdf, x, z){
+    log10(0.1+abs(z$min)+x)
+  },
+  "log_fwhm_fcrn_p"=function(rdf, x, z){
+    pos_x1 <- abs(min(rdf$x1, na.rm = T)) + rdf$x1
+    log10(0.1 + abs(z$min) + x + pos_x1)
+  },
+  "my_log10"=function(rdf, x, z){
+    mask <- rdf$x1 > 0.1
+    mask[mask == 0] <- NA
+    x.nyte <- mask * x
+    l <- log10(0.1+abs(z$min)+x.nyte)
+    l[is.na(l)] <- 0
+    return(l)
+  },
+  "inv"=function(rdf, x, z){
+    1/(0.1+abs(z$min)+x)
+  },
+  "sigmoid"=function(rdf, x,z){
+    1 / ( 1 + exp(-x))
+  },
+  "invsigmoid"=function(rdf, x,z){
+    1/(1 + exp(x))
+  }
+)
+```
+
+## Start symbolic regression
+
+Based on seed value you have multiple options
+
+```
+if(seed == 0){
+  base.filepath <- paste0('regression/regression',type,'.exploration.l',formula.len,'.rData')
+  res.new <- exaustive.search(regressors.df, l.Fn,
+                         n.squares=n.squares,
+                         formula.len=formula.len,
+                         K=K, N=N, seed=seed,
+                         transformations=transformations,
+                         custom.abs.mins=list(),
+                         glob.filepath = base.filepath,
+                         chunk.size=NULL, cv.norm=T)
+}else if(seed < 1000){
+  base.filepath <- paste0('regression/regression',type,'.exploration.l',formula.len,'.rData')
+  # general "random" search to find good candidates
+  new.sample.res <- random.search(regressors.df, l.Fn, n.squares, formula.len,
+                                  maxiter=10, K=K, N=N,
+                                  transformations=transformations,
+                                  glob.filepath = base.filepath,
+                                  local.filepath = res.filepath,
+                                  memoization=T, cv.norm = T)
+}else{
+  # genetic can change formula length
+  base.filepath <- c(
+    l1.filepath,
+    l2.filepath,
+    l3.filepath#,
+    #l4.filepath
+  )
+
+  # finetuning procedure using genetic algorithm
+  best.vars.l <- list(
+    c('log.x1')  )
+  best.finetuned <- genetic.search(
+    regressors.df,
+    l.Fn,
+    n.squares=n.squares,
+    max.formula.len=max.formula.len,
+    maxiter=100,
+    transformations=transformations,
+    glob.filepath=base.filepath,
+    local.filepath=res.filepath,
+    memoization=T,
+    pcrossover=0.1,
+    pmutation=0.9,
+    seed=NULL,
+    keepBest=T,
+    K=K,
+    N=N,
+    popSize = 100,
+    best.vars.l=best.vars.l,
+    cv.norm = T
+  )
+}
+```

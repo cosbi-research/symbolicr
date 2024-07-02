@@ -12,6 +12,7 @@
 #' @param cv.norm Normalize regressors after train-validation split in inner cross-validation loop.
 #' @param errors.x position of R^2 and PE in plot (x axis)
 #' @param errors.y position of R^2 and PE in plot (y axis)
+#' @param with.names Plot also product name
 #'
 #' @export
 #'
@@ -21,7 +22,7 @@
 #'    # plot results as observed vs predicted values (out-of-sample)
 #'    # NOTE: complete.X.df should contain the columns
 #'    # `patch_hyd_2`, `patch_pos_.` and `patch_hyd_5`
-#'    experiments.0 <- plot.pred.vs.obs(
+#'    experiments.0 <- pred.vs.obs(
 #'                       complete.X.df, y,
 #'                       cur.vars=c('inv.patch_hyd_2','patch_hyd_5'),
 #'                       custom.abs.mins=list(),
@@ -37,7 +38,7 @@
 #'                       )
 #'                     )
 #'}
-plot.pred.vs.obs <- function(
+pred.vs.obs <- function(
     complete.X.df,
     y, cur.vars, custom.abs.mins, K, N,
     transformations=list(
@@ -46,7 +47,8 @@ plot.pred.vs.obs <- function(
     ),
     cv.norm=T,
     errors.x=3.2,
-    errors.y=5.0
+    errors.y=5.0,
+    with.names=F
 ){
   cur.vars <- sort(cur.vars)
   cur.vars.str <- paste(sort(cur.vars), collapse=",")
@@ -105,13 +107,15 @@ plot.pred.vs.obs <- function(
     ggplot2::ggtitle(paste0('Estimated with N=',N,' ',K,"-fold CV\n",paste(base.formula.c, collapse='\n'))) +
     ggplot2::theme_light()+ggplot2::theme(text = ggplot2::element_text(size=20)) +
     ggplot2::geom_point(size=3) +
-      #geom_text(nudge_x=0.3) +
     ggplot2::xlab("Predicted") +
     ggplot2::ylab("Observed") +
     ggplot2::geom_errorbarh(colour="#000000", linetype="dashed") +
     ggplot2::geom_abline(ggplot2::aes(intercept=0, slope=1)) +
     ggplot2::geom_text(data=base.best.errors, size=6, ggplot2::aes(x=errors.x, y=errors.y, label=paste0('PE=',base.pe,'±',base.pe.sd,'\nR^2=',base.r.squared,'±',base.r.squared.sd)), color="red", inherit.aes = F)
    #   scale_color_manual(values=colours)
+
+  if(with.names)
+    g <- g + ggplot2::geom_text(nudge_x=0.3)
 
   return(g)
 }

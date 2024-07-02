@@ -39,7 +39,6 @@ parse.vars <- function(cur.vars, base.regressors, transformations=list()){
       }
     }
     # now look for the number of mul.
-    mul.len<-4
     ms <- gregexpr('mul.', var, fixed=T)[[1]]
     ms.len <- length(ms)
     n.mul <- 0

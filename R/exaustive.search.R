@@ -68,13 +68,15 @@ exaustive.search <- function(
   print(paste0("Computing missing formulas: ", length(missing)))
   if(!is.null(chunk.size))
     missing <- missing[seq(1, chunk.size)]
-  # compute exaustively all missing formulas
-  res.new <- comb.search(complete.X.df, y,
-                         # data.frame of n.missing.values x formula.len
-                         combinations=t(as.data.frame(strsplit(missing,",",fixed=T))),
-                         K=K, N=N, seed=seed,
-                         transformations=transformations, custom.abs.mins=list(), cv.norm=T)
-  res <- rbind(res, res.new)
-  saveRDS(res, glob.filepath)
+  if(length(missing)>0){
+    # compute exaustively all missing formulas
+    res.new <- comb.search(complete.X.df, y,
+                           # data.frame of n.missing.values x formula.len
+                           combinations=t(as.data.frame(strsplit(missing,",",fixed=T))),
+                           K=K, N=N, seed=seed,
+                           transformations=transformations, custom.abs.mins=list(), cv.norm=T)
+    res <- rbind(res, res.new)
+    saveRDS(res, glob.filepath)
+  }
   return(res.new)
 }

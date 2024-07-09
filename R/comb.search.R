@@ -58,7 +58,13 @@ comb.search <- function(
     # impose lexicographical order
     cur.vars <- sort(cur.vars)
     cur.vars.str <- paste(sort(cur.vars), collapse=",")
+    if(nchar(cur.vars.str)==0){
+      return(data.frame('base.pe'=numeric(),'base.cor'=numeric(),'base.r.squared'=numeric(),
+                        'base.max.pe'=numeric(), 'base.iqr.pe'=numeric(), 'base.max.cooksd'=numeric(), 'base.max.cooksd.name'=character(),
+                        'vars'=character(), 'n.squares'=numeric(), 'formula.len'=numeric()))
+    }
     print(paste0("Regression on ", cur.vars.str))
+
     cur.vars.parsed <- parse.vars(cur.vars, names(complete.X.df), transformations)
     cur.n.squares <- max(sapply(cur.vars.parsed, function(cur.var.parsed) length(cur.var.parsed$prods)))-1
 

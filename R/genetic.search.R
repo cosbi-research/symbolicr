@@ -98,6 +98,23 @@ genetic.search <- function(
     cv.norm=F,
     best.vars.l=list()
 ){
+  # for every multistart point in best.vars.l
+  # apply GA
+  # binary encoding for genetic algorithm
+  best.results.m <- as.matrix(do.call(rbind, lapply(best.vars.l, function(best.vars){
+    optim_results.perturbed <- sapply(best.vars, function(var){
+      v.esc <- regex.escape(var)
+      grep(paste0('^',v.esc,'$'), complete.regressors)
+    }, USE.NAMES = F)
+    if(typeof(optim_results.perturbed)=='integer' && !identical(optim_results.perturbed, integer(0))){
+      optim_results.perturbed
+      optim_results.perturbed.bin <- rep(0, regressors.len)
+      optim_results.perturbed.bin[optim_results.perturbed] <- 1
+      optim_results.perturbed.bin
+    }else{
+      stop(paste0("Formula '",paste(best.vars, collapse=' + '),"' is not within bounds imposed by n.squares and transformations. Remove it from the initial starting points."))
+    }
+  })))
 
   if(memoization){
     if(is.character(glob.filepath) & length(glob.filepath) == 1)
@@ -180,19 +197,6 @@ genetic.search <- function(
   }else{
     dt.sample.res<-NULL
   }
-
-  # for every multistart point in best.vars.l
-  # apply GA
-  # binary encoding for genetic algorithm
-  best.results.m <- as.matrix(do.call(rbind, lapply(best.vars.l, function(best.vars){
-    optim_results.perturbed <- sapply(best.vars, function(var){
-      v.esc <- regex.escape(var)
-      grep(paste0('^',v.esc,'$'), complete.regressors)
-    }, USE.NAMES = F)
-    optim_results.perturbed.bin <- rep(0, regressors.len)
-    optim_results.perturbed.bin[optim_results.perturbed] <- 1
-    optim_results.perturbed.bin
-  })))
 
   if(typeof(monitor) == "closure"){
     monitor.fun <- monitor

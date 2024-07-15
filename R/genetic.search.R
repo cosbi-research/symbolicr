@@ -98,6 +98,11 @@ genetic.search <- function(
     cv.norm=F,
     best.vars.l=list()
 ){
+  # compute regressors on full dataset
+  complete.regressors <- compute.regressors.names(complete.X.df, n.squares, transformations)
+  regressors.len <- length(complete.regressors)
+  print(paste0("## Total number of single terms: ", regressors.len))
+
   # for every multistart point in best.vars.l
   # apply GA
   # binary encoding for genetic algorithm
@@ -133,11 +138,6 @@ genetic.search <- function(
     new.sample.res <- empty.sample()
   }
 
-  # compute regressors on full dataset
-  complete.regressors <- compute.regressors.names(complete.X.df, n.squares, transformations)
-  regressors.len <- length(complete.regressors)
-  print(paste0("## Total number of single terms: ", regressors.len))
-
   # cross-validation parameters
   ns <- nrow(complete.X.df)
   optim_fun <- function(x, dt.sample.res, memoization, max.formula.len){
@@ -165,7 +165,7 @@ genetic.search <- function(
 
       errs.m <- stats::aggregate(
         cbind(base.pe, base.cor, base.r.squared, base.max.pe, base.iqr.pe, base.max.cooksd)~1,
-        data=experiments, FUN=mean)
+        data=experiments, FUN=mean, na.action = 'na.pass')
 
       errs.m$base.max.cooksd.name <- paste(unique(experiments$base.max.cooksd.name), collapse=",")
       errs.m$vars <- paste(cur.vars, collapse=',')

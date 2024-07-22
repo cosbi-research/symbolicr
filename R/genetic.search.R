@@ -125,7 +125,12 @@ genetic.search <- function(
     if(is.character(glob.filepath) & length(glob.filepath) == 1)
       prev.sample.res <- readRDS(glob.filepath)
     else if(is.character(glob.filepath))
-      prev.sample.res <- do.call(rbind,lapply(glob.filepath, function(path) readRDS(path)))
+      prev.sample.res <- do.call(rbind,lapply(glob.filepath, function(path){
+        if(file.exists(path))
+          readRDS(path)
+        else
+          empty.sample()
+      }))
 
     # restore from previously interrupted run
     if(file.exists(local.filepath)){

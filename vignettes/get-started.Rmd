@@ -15,12 +15,20 @@ knitr::opts_chunk$set(
 ```
 
 Find non-linear formulas that fits your input data. 
-You can systematically explore and memoize the possible formulas and it's cross-validation performance, in an incremental fashon. 
-Two interoperable search functions are available: 
+You can systematically explore and memoize the possible formulas and it's cross-validation performance, in a parallel and incremental fashon. 
+Three interoperable search functions are available: 
 
 - `random.search` performs a random exploration, 
 - `genetic.search` employs a genetic optimization algorithm
 - `exaustive.search` explore all the space not already explored (WARNING may take a long time and doesn't have intermediate save points.)
+
+The library is designed with a massive parallelization use in mind, that's why you have 
+a `base.filepath` for shared results among all parallel processors,
+and a `res.filepath` with local results only.
+
+Periodically, the multiple `res.filepath` will be joined together in a shared `base.filepath`.
+
+Let's broke this down step by step.
 
 ## Load the library and set-up the data
 
@@ -42,18 +50,49 @@ l1.filepath <- paste0('regression/regression',type,'.exploration.l1.rData')
 # create file
 saveRDS(empty.sample(), l1.filepath)
 
-best.n.squares <- n.squares <- 1
-best.formula.len <- formula.len <- 2
-seed=1010
-
 K=15
 N=30
 max.formula.len=2
 ```
 
+Note that you can control the formula space, and the algorithm employed 
+by just setting three variables
+
+- seed
+- formula.len
+- n.squares
+
+Thus, you can run multiple independent search processes both on your computer or server-side with a command similar to this one
+
+```
+R --no-echo --no-restore --file=find_f.R --args 3 2 1006
+```
+
+That will run genetic search to find formulas of max len 3, and order up to 2.
+
+You just need to get the variables from command-line
+
+```
+options <- commandArgs(trailingOnly = TRUE)
+
+formula.len <- as.integer(options[1])
+n.squares <- as.integer(options[2])
+seed <- as.integer(options[3])
+```
+
+otherwise, you can hard-code them
+
+```
+best.n.squares <- n.squares <- 1
+best.formula.len <- formula.len <- 2
+seed=1010
+```
+
+
 ## Define rData file for checkpoint save
 
-Used only in genetic and random search
+Used only in genetic and random search.
+Exaustive search will append the missing formulas to the file pointed by `base.filepath`.
 
 ```
 if(seed > 0){
@@ -80,6 +119,7 @@ transformations <- list(
     log10(0.1 + abs(z$min) + x + pos_x1)
   },
   "my_log10"=function(rdf, x, z){
+    # WHATEVER fancy function you like
     mask <- rdf$x1 > 0.1
     mask[mask == 0] <- NA
     x.nyte <- mask * x
@@ -101,7 +141,7 @@ transformations <- list(
 
 ## Start symbolic regression
 
-Based on seed value you have multiple options
+Based on seed value, run a different algorithm
 
 ```
 if(seed == 0){
@@ -157,3 +197,4 @@ if(seed == 0){
   )
 }
 ```
+

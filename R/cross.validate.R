@@ -103,7 +103,7 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
       }
 
       # compute min values on complete dataset to avoid out of domain errors
-      regressors.def <- compute.regressors(rbind(X.df.std, X.df.test.std), parsed.vars, transformations, X.mean.sd)
+      regressors.def <- regressors(rbind(X.df.std, X.df.test.std), parsed.vars, transformations, X.mean.sd)
       regressors.min.values <- regressors.def$min.values
       complete.X.df.std <- regressors.def$regressors
 

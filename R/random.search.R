@@ -72,7 +72,7 @@ random.search <- function(
     memoization=F,
     cv.norm=F){
 
-  complete.regressors <- compute.regressors.names(complete.X.df, n.squares, transformations)
+  complete.regressors <- regressors.names(complete.X.df, n.squares, transformations)
   regressors.len <- length(complete.regressors)
   tot.rows <- choose(regressors.len,formula.len)
 

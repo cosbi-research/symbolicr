@@ -19,7 +19,8 @@ pred.vs.obs(
  }),
   cv.norm = T,
   errors.x = 3.2,
-  errors.y = 5
+  errors.y = 5,
+  with.names = F
 )
 }
 \arguments{
@@ -42,6 +43,8 @@ pred.vs.obs(
 \item{errors.x}{position of R^2 and PE in plot (x axis)}
 
 \item{errors.y}{position of R^2 and PE in plot (y axis)}
+
+\item{with.names}{Plot also product name}
 }
 \description{
 Predicted values are obtained out-of-sample using K-fold cross-validation repeated N times and averaged.

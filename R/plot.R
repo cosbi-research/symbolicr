@@ -61,33 +61,34 @@ pred.vs.obs <- function(
   experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N,
                                 transformations, cv.norm)
 
-
+  # rename to out of sample (oos) because R check will complain otherwise
+  names(experiments)[which(names(experiments)=='real')] <- 'oos'
   # create dataframe for plot
   p.vs.r.experiments.by.alpha.m <- stats::aggregate(
-    cbind(real,base.pred, base.pe, base.r.squared)~BioReg,
+    cbind(oos,base.pred, base.pe, base.r.squared)~BioReg,
     data=experiments, FUN=function(x){
       q<-stats::quantile(x, probs=c(0.5))
       q[['50%']]
     })
-  names(p.vs.r.experiments.by.alpha.m) <- c('BioReg','real','base.pred.m', 'base.pe','base.r.squared')
+  names(p.vs.r.experiments.by.alpha.m) <- c('BioReg','oos','base.pred.m', 'base.pe','base.r.squared')
   p.vs.r.experiments.by.alpha.sd <- stats::aggregate(
-    cbind(real,base.pred,base.pe, base.r.squared)~BioReg,
+    cbind(oos,base.pred,base.pe, base.r.squared)~BioReg,
     data=experiments, FUN=stats::sd)
-  names(p.vs.r.experiments.by.alpha.sd) <- c('BioReg','real.sd','base.pred.sd','base.pe.sd','base.r.squared.sd')
+  names(p.vs.r.experiments.by.alpha.sd) <- c('BioReg','oos.sd','base.pred.sd','base.pe.sd','base.r.squared.sd')
   p.vs.r.experiments.by.alpha.ld <- stats::aggregate(
-    cbind(real,base.pred,base.pe, base.r.squared)~BioReg,
+    cbind(oos,base.pred,base.pe, base.r.squared)~BioReg,
     data=experiments, FUN=function(x){
       q<-stats::quantile(x, probs=c(0.025, 0.975))
       q[['2.5%']]
     })
-  names(p.vs.r.experiments.by.alpha.ld) <- c('BioReg','real.ld','base.pred.ld','base.pe.ld','base.r.squared.ld')
+  names(p.vs.r.experiments.by.alpha.ld) <- c('BioReg','oos.ld','base.pred.ld','base.pe.ld','base.r.squared.ld')
   p.vs.r.experiments.by.alpha.ud <- stats::aggregate(
-    cbind(real,base.pred,base.pe, base.r.squared)~BioReg,
+    cbind(oos,base.pred,base.pe, base.r.squared)~BioReg,
     data=experiments, FUN=function(x){
       q<-stats::quantile(x, probs=c(0.025, 0.975))
       q[['97.5%']]
     })
-  names(p.vs.r.experiments.by.alpha.ud) <- c('BioReg','real.ud','base.pred.ud','base.pe.ud','base.r.squared.ud')
+  names(p.vs.r.experiments.by.alpha.ud) <- c('BioReg','oos.ud','base.pred.ud','base.pe.ud','base.r.squared.ud')
 
   p.vs.r.by.alpha <- merge(p.vs.r.experiments.by.alpha.m,
                                  merge(p.vs.r.experiments.by.alpha.sd,
@@ -103,7 +104,7 @@ pred.vs.obs <- function(
   #colours <- hcl(seq(375,15, length=length(unique(dataset.F$dataset))+1),l = 65, c = 100)
   #colours <- sort(colours)
 
-  g<-ggplot2::ggplot(p.vs.r.by.alpha, ggplot2::aes(x = base.pred.m, y = real, xmin=base.pred.ld, xmax=base.pred.ud, label=BioReg)) +
+  g<-ggplot2::ggplot(p.vs.r.by.alpha, ggplot2::aes(x = base.pred.m, y = oos, xmin=base.pred.ld, xmax=base.pred.ud, label=BioReg)) +
     ggplot2::ggtitle(paste0('Estimated with N=',N,' ',K,"-fold CV\n",paste(base.formula.c, collapse='\n'))) +
     ggplot2::theme_light()+ggplot2::theme(text = ggplot2::element_text(size=20)) +
     ggplot2::geom_point(size=3) +
@@ -111,7 +112,7 @@ pred.vs.obs <- function(
     ggplot2::ylab("Observed") +
     ggplot2::geom_errorbarh(colour="#000000", linetype="dashed") +
     ggplot2::geom_abline(ggplot2::aes(intercept=0, slope=1)) +
-    ggplot2::geom_text(data=base.best.errors, size=6, ggplot2::aes(x=errors.x, y=errors.y, label=paste0('PE=',base.pe,'±',base.pe.sd,'\nR^2=',base.r.squared,'±',base.r.squared.sd)), color="red", inherit.aes = F)
+    ggplot2::geom_text(data=base.best.errors, size=6, ggplot2::aes(x=errors.x, y=errors.y, label=paste0('PE=',base.pe,'\u00B1',base.pe.sd,'\nR^2=',base.r.squared,'\u00B1',base.r.squared.sd)), color="red", inherit.aes = F)
    #   scale_color_manual(values=colours)
 
   if(with.names)

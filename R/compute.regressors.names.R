@@ -8,10 +8,10 @@
 #'
 #' @examples
 #' \dontrun{
-#'  complete.regressors <- compute.regressors.names(complete.X.df, n.squares, transformations)
+#'  complete.regressors <- regressors.names(complete.X.df, n.squares, transformations)
 #'  print(length(complete.regressors))
 #' }
-compute.regressors.names <- function(complete.X.df, n.squares, transformations){
+regressors.names <- function(complete.X.df, n.squares, transformations){
   regressors <- names(complete.X.df)
   complete.regressors <- regressors
   if(n.squares>0){
@@ -19,6 +19,6 @@ compute.regressors.names <- function(complete.X.df, n.squares, transformations){
     complete.regressors <- complete.square.names(l)
   }
   if(length(transformations)>0)
-    complete.regressors <- c(complete.regressors, compute.transformations.names(complete.regressors, transformations))
+    complete.regressors <- c(complete.regressors, transformations.names(complete.regressors, transformations))
   return(complete.regressors)
 }

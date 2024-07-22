@@ -51,7 +51,7 @@ all combinations of formula terms, of a given length.
 \dontrun{
 base.filepath <- paste0('regression/regression',type,'.exploration.l',formula.len,'.rData')
 res <- readRDS(base.filepath)
-complete.regressors <- compute.regressors.names(regressors.df, n.squares, transformations)
+complete.regressors <- regressors.names(regressors.df, n.squares, transformations)
 # compute combinations up to length formula.len
 regressors.list <- lapply(seq(formula.len), function(x) complete.regressors)
 combinations <- RcppAlgos::comboGrid(regressors.list, repetition = F)

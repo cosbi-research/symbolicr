@@ -99,7 +99,7 @@ genetic.search <- function(
     best.vars.l=list()
 ){
   # compute regressors on full dataset
-  complete.regressors <- compute.regressors.names(complete.X.df, n.squares, transformations)
+  complete.regressors <- regressors.names(complete.X.df, n.squares, transformations)
   regressors.len <- length(complete.regressors)
   print(paste0("## Total number of single terms: ", regressors.len))
 

@@ -1,0 +1,134 @@
+---
+title: "join-results"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{join-results}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(symbolicr)
+out.folder<-'regression'
+
+```
+
+## Collecting results from parallel independent tests
+
+The library is designed with a massive parallelization use in mind, 
+and this results in multiple independent rData files (`res.filepath`) containing formula performances.
+
+Periodically, you have to join all these `res.filepath` in a shared `base.filepath`.
+This code is an example on how to do that.
+
+### Define base.filepaths
+
+Base filepaths maybe split by formula length. 
+I find this useful to avoid having a single big rData file.
+
+```
+l1.filepath <- paste0('regression/regression',type,'.exploration.l1.rData')
+l2.filepath <- paste0('regression/regression',type,'.exploration.l2.rData')
+l3.filepath <- paste0('regression/regression',type,'.exploration.l3.rData')
+
+l1.res <- readRDS(l1.filepath)
+l2.res <- readRDS(l2.filepath)
+l3.res <- readRDS(l3.filepath)
+```
+
+### Check exploration space percentage
+
+You may want to know what fraction of the formula space you have explored.
+This is a way to do that, 
+the assumption is that you have a transformation list in your environnment as defined in get-started vignette.
+
+```
+max.n.squares <- 2
+complete.regressors <- symbolicr::compute.regressors.names(regressors.df, max.n.squares, transformations)
+
+tot.regressors <- length(complete.regressors)
+# percentage of L=1
+100*nrow(l1.res)/choose(tot.regressors,1)
+
+# percentage of L=2
+100*nrow(l2.res)/choose(tot.regressors,2)
+# 10.61434
+
+# percentage of L=3
+100*nrow(l3.res)/choose(tot.regressors,3)
+```
+
+### Load in one-shot all the independent results
+
+```
+# all possible table names
+hyperparams <- expand.grid(formula.len=seq(1,3), n.squares=seq(0,2), seed=seq(0,1010))
+# read them ALL!
+new.res.l <- apply(hyperparams, MARGIN=1, simplify = F, FUN=function(row){
+  flen <- row[['formula.len']]
+  nsq <- row[['n.squares']]
+  seed <- row[['seed']]
+
+  if(seed == 0){
+    res.filepath <- file.path(out.folder, paste0('regression',type,'.exploration.fl.',flen,'.ord.',nsq,'.rData'))
+  }else{
+    res.filepath <- file.path(out.folder, paste0('regression',type,'.exploration.fl.',flen,'.ord.',nsq,'seed.',seed,'.rData'))
+  }
+
+  if(file.exists(res.filepath)){
+    print(res.filepath)
+    res <- readRDS(res.filepath)
+    cres <- res
+  }else{
+    cres <- data.frame(base.pe=double(),base.cor=double(),base.r.squared=double(),
+                       base.max.pe=double(), base.iqr.pe=double(), base.max.cooksd=double(), base.max.cooksd.name=character(),
+                       vars=character(), n.squares=integer(), formula.len=integer())
+  }
+  return(cres)
+})
+# drop empty
+new.res.l<- new.res.l[which(sapply(new.res.l, nrow) > 0)]
+new.res <- do.call(rbind, new.res.l)
+
+dedup.res <- new.res[!duplicated(new.res$vars), ]
+
+# how many NEW formulas of length 1/2/3/4?
+l1.dedup.res <- dedup.res[dedup.res$formula.len==1, ]
+l2.dedup.res <- dedup.res[dedup.res$formula.len==2, ]
+l3.dedup.res <- dedup.res[dedup.res$formula.len==3, ]
+```
+
+### Differential analysis (preparation)
+
+You may want to take note of the number of new results that will be appended to the rData,
+so that you can evaluate only the new results.
+
+```
+# take note for analyze results..
+nrow(l1.dedup.res)
+nrow(l2.dedup.res)
+nrow(l3.dedup.res)
+```
+
+### Update shared results
+
+```
+l1.res <- rbind(l1.res, l1.dedup.res)
+l2.res <- rbind(l2.res, l2.dedup.res)
+l3.res <- rbind(l3.res, l3.dedup.res)
+
+l1.res.dedup <- l1.res[!duplicated(l1.res$vars), ]
+l2.res.dedup <- l2.res[!duplicated(l2.res$vars), ]
+l3.res.dedup <- l3.res[!duplicated(l3.res$vars), ]
+
+saveRDS(l1.res.dedup, l1.filepath)
+saveRDS(l2.res.dedup, l2.filepath)
+saveRDS(l3.res.dedup, l3.filepath)
+```

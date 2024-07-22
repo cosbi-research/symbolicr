@@ -1,0 +1,170 @@
+---
+title: "formula-analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{formula-analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(symbolicr)
+out.folder<-'regression'
+max.formula.len=3
+K=20
+N=50
+
+x1<-runif(100, min=2, max=67)
+x2<-runif(100, min=0.01, max=0.1)
+X <- data.frame(x1=x1, x2=x2)
+
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+```
+
+## Simple one-formula analysis
+
+This utility function nicely plots mean and standard deviation of cross-validation performances (R squared and PE%)
+in a predicted vs observed plot.
+
+```
+test.f <- sort(c('inv_pi_p.mul.empty_well.pi','sigmoid.fwhm_fcrn'))
+
+g=symbolicr::pred.vs.obs(X, y, test.f, list(), K, N, transformations, cv.norm = T, errors.x=2.5, errors.y=0.5)
+ggplotly(g)
+```
+
+Alternatively you can have the same results in a tabular form
+
+```
+res <- symbolicr::test.formula(X, y, test.f, list(), K, N, transformations, cv.norm = T)
+res
+```
+
+## Set-up the data and load the shared results
+
+When you want to test multiple formulas at the same time without looking at a plot, 
+you need an automated way to rank formulas.
+The following sections show a way to do that.
+
+We assume you have your data `X` and your target `y` in the environment,
+as well as the non-linear transformations defined as in get-started vignette.
+
+Now load the shared results
+
+```
+l1.filepath <- paste0('regression/regression',type,'.exploration.l1.rData')
+l2.filepath <- paste0('regression/regression',type,'.exploration.l2.rData')
+l3.filepath <- paste0('regression/regression',type,'.exploration.l3.rData')
+
+l1.res <- readRDS(l1.filepath)
+l2.res <- readRDS(l2.filepath)
+l3.res <- readRDS(l3.filepath)
+```
+
+### Differential analysis, preparation
+
+You may want to analyze at every iteration only the new formulas.
+Define a list of the `N` new results you want to use:
+
+```
+prev.res <- list("109731"=l2.res,"356160"=l3.res)#,"10"=l2.res, "150000"=l3.res)
+```
+
+See join results vignette for a way to obtain those numbers.
+
+### Differential analysis
+
+First join in a single data.frame the new formulas to analyze, 
+and define a "best" objective function you want to overcome.
+
+```
+opt.results <- do.call(rbind, prev.res)
+best.obj <- 0.1
+```
+
+Define a fitness function, 
+that will have higher values on better formulas.
+You can use the built-in function in symbolicr `symbolicr::pe.r.squared.formula.len.fitness`
+or define your own as below:
+
+```
+my.fitness <- function(errs.m, max.formula.len){
+  x0 <- 0.4
+  r <- as.double(errs.m$base.r.squared)
+  flen <- as.integer(errs.m$formula.len)
+  pe <- as.double(errs.m$base.pe)
+  denominator <- exp(10*pe)
+  numerator <- sign(r)*(r*(max.formula.len/flen))^2
+  numerator / denominator
+}
+```
+
+Then this procedure reports all the formulas that have a fitness function higher than the one defined
+
+```
+new.res <- lapply(seq(length(prev.res)), function(i){
+  # get current data store
+  opt.results <- prev.res[[i]]
+  howmany <- names(prev.res)[i]
+  # select howmany rows should be checked (set howmany to nrow(opt.results) to check all)
+  rows <- seq(nrow(opt.results)-as.integer(howmany)+1, nrow(opt.results))
+
+  ## COMPUTE FITNESS FOR EVERY NEW RESULT COMPUTED
+  check.res <- opt.results[rows, ]
+  check.res$obj <- apply(check.res, MARGIN=1, FUN=function(row) my.fitness(as.data.frame(t(row)), max.formula.len))
+  promising.res.idxs <- which(check.res$obj >= best.obj)
+  if(length(promising.res.idxs) == 0)
+    return(check.res)
+  else
+    print(paste0("Updating dataset ",i,"..."))
+  promising.res <- check.res[promising.res.idxs, ]
+  max.n.squares <- max(promising.res$n.squares)
+
+  ## (SLOW) CROSS-VALIDATE HARDER THE PROMISING RESULTS (the one with fitness higher than best.obj)
+  # rechecked.promising.res.l <- apply(promising.res, MARGIN=1, FUN=function(row){
+  #   cur.best.vars <- strsplit(row[['vars']], ",")[[1]]
+  #   set.seed(0)
+  #   print(cur.best.vars)
+  #   experiments <- cross.validate(regressors.df, l.F2, cur.best.vars, custom.abs.mins = list(), K=K, N=N, n.squares=max.n.squares,
+  #                                 transformations=transformations, cv.norm = T)
+  #
+  #   base.best.errors <- data.frame(base.pe=round(mean(experiments[, 'base.pe']), 3),
+  #                                  #base.pe.sd=round(sd(experiments[, 'base.pe']), 3),
+  #                                  base.cor=round(mean(experiments[, 'base.cor']), 3),
+  #                                  #base.cor.sd=round(sd(experiments[, 'base.cor']), 3),
+  #                                  base.r.squared=round(mean(experiments[, 'base.r.squared']), 3),
+  #                                  #base.r.squared.sd=round(sd(experiments[, 'base.r.squared']), 3)
+  #                                  base.max.pe=round(mean(experiments[, 'base.max.pe']), 3),
+  #                                  base.iqr.pe=round(mean(experiments[, 'base.iqr.pe']), 3),
+  #                                  base.max.cooksd=round(mean(experiments[, 'base.max.cooksd']), 3),
+  #                                  base.max.cooksd.name=paste(unique(experiments$base.max.cooksd.name), collapse=","),
+  #                                  vars=row[['vars']],
+  #                                  n.squares=row[['n.squares']],
+  #                                  formula.len=row[['formula.len']]
+  #   )
+  #   base.best.errors$obj <- pe.r.squared.formula.len.fitness(base.best.errors, max.formula.len = max.formula.len)
+  #   base.best.errors
+  # })
+  #
+  # rechecked.promising.res<-do.call(rbind, rechecked.promising.res.l)
+  #
+  # # update & reorder
+  # check.res[promising.res.idxs, ] <- rechecked.promising.res
+  
+  return(check.res)
+})
+
+# see new candidates better than best.vars
+better.res <- lapply(new.res, function(opt.results){
+  opt.results[opt.results$obj>=best.obj, ]
+})
+better.res
+```
+

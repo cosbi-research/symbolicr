@@ -51,7 +51,7 @@ exaustive.search <- function(
   if(!is.null(glob.filepath)){
     res <- readRDS(glob.filepath)
   }
-  complete.regressors <- compute.regressors.names(complete.X.df, n.squares, transformations)
+  complete.regressors <- regressors.names(complete.X.df, n.squares, transformations)
   # compute combinations up to length formula.len
   regressors.list <- lapply(seq(formula.len), function(x) complete.regressors)
   combinations <- RcppAlgos::comboGrid(regressors.list, repetition = F)

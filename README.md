@@ -2,6 +2,8 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
 
+# Table of Contents
+
 - [symbolicR](#symbolicr)
   - [Installation](#installation)
   - [Genetic search](#genetic-search)

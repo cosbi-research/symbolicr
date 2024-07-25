@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
 ```
 
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+# Table of Contents
 
 - [symbolicR](#symbolicr)
    * [Installation](#installation)

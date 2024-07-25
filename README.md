@@ -4,7 +4,7 @@
 
 # Table of Contents
 
-- [symbolicR](#symbolicr)
+- [SymbolicR](#symbolicr)
   - [Installation](#installation)
   - [Genetic search](#genetic-search)
   - [Random search](#random-search)
@@ -12,7 +12,7 @@
 
 <!-- TOC end -->
 
-# symbolicR
+# SymbolicR
 
 <!-- badges: start -->
 <!-- badges: end -->

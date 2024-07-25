@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
 # Table of Contents
 
-- [symbolicR](#symbolicr)
+- [SymbolicR](#symbolicr)
    * [Installation](#installation)
    * [Genetic search](#genetic-search)
    * [Random search](#random-search)
@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 <!-- TOC end -->
 
 
-# symbolicR
+# SymbolicR
 
 <!-- badges: start -->
 <!-- badges: end -->

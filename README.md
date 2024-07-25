@@ -19,12 +19,8 @@ interoperable search functions are available:
 You can install the development version of symbolicr like so:
 
 ``` r
-devtools::install_gitlab('COSBI/symbolicr', host='source.cosbi.eu', auth_token='glpat-....')
+devtools::install_github('cosbi-research/symbolicr')
 ```
-
-If you don’t have an auth token, login to source.cosbi.eu and generate
-one by following [this
-guide](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token).
 
 ## Genetic search
 

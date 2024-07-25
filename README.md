@@ -1,5 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [symbolicR](#symbolicr)
+  - [Installation](#installation)
+  - [Genetic search](#genetic-search)
+  - [Random search](#random-search)
+  - [Combinatorial Search](#combinatorial-search)
+
+<!-- TOC end -->
 
 # symbolicR
 
@@ -8,18 +17,26 @@
 
 Find non-linear formulas that fits your input data. You can
 systematically explore and memoize the possible formulas and it’s
-cross-validation performance, in an incremental fashon. Two
+cross-validation performance, in an incremental fashon. Three main
 interoperable search functions are available:
 
 - `random.search` performs a random exploration,
 - `genetic.search` employs a genetic optimization algorithm
+- `comb.search` allows the user to provide a data.frame of formulas to
+  be tested
+
+After installation, see tutorials with
+
+``` r
+browseVignettes('symbolicr')
+```
 
 ## Installation
 
 You can install the development version of symbolicr like so:
 
 ``` r
-devtools::install_github('cosbi-research/symbolicr')
+devtools::install_github('cosbi-research/symbolicr', build_vignettes = TRUE)
 ```
 
 ## Genetic search

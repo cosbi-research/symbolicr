@@ -18,7 +18,7 @@
 <!-- badges: end -->
 
 Find non-linear formulas that fits your input data. You can
-systematically explore and memoize the possible formulas and it’s
+systematically explore and memoize the possible formulas and its
 cross-validation performance, in an incremental fashon. Three main
 interoperable search functions are available:
 

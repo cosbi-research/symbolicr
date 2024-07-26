@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 Find non-linear formulas that fits your input data. 
-You can systematically explore and memoize the possible formulas and it's cross-validation performance, in an incremental fashon. 
+You can systematically explore and memoize the possible formulas and its cross-validation performance, in an incremental fashon. 
 Three main interoperable search functions are available: 
 
 - `random.search` performs a random exploration, 

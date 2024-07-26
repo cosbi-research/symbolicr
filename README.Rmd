@@ -27,6 +27,7 @@ knitr::opts_chunk$set(
 
 # SymbolicR
 
+[![DOI](https://zenodo.org/badge/830556463.svg)](https://zenodo.org/doi/10.5281/zenodo.12904321)
 <!-- badges: start -->
 <!-- badges: end -->
 

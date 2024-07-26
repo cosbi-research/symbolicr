@@ -14,8 +14,8 @@
 
 # SymbolicR
 
-<!-- badges: start -->
-<!-- badges: end -->
+[![DOI](https://zenodo.org/badge/830556463.svg)](https://zenodo.org/doi/10.5281/zenodo.12904321)
+<!-- badges: start --> <!-- badges: end -->
 
 Find non-linear formulas that fits your input data. You can
 systematically explore and memoize the possible formulas and its

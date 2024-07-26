@@ -5,7 +5,7 @@ Authors@R:
     person("Danilo", "Tomasoni", , "tomasoni@cosbi.eu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8427-4230"))
 Description: Find non-linear formulas that fits your input data. You can systematically explore and memoize the possible formulas and it's cross-validation performance, in an incremental fashon. Two interoperable search functions are available: `random.search` performs a random exploration, `genetic.search` employs a genetic optimization algorithm, `comb.search` combines best results of the two.
-License: MIT + file LICENSE
+License: file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1

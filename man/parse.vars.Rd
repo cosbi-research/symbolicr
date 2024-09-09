@@ -31,4 +31,6 @@ parse.vars(
 random.search
 
 genetic.search
+
+serialize.vars
 }

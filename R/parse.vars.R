@@ -3,6 +3,7 @@
 #' Return a list with the non-linear function applied and the base terms of the formula.
 #' @seealso random.search
 #' @seealso genetic.search
+#' @seealso serialize.vars
 #'
 #' @param cur.vars An array of non-linear formula terms. Ex. `cur.vars <- c('a','mul.a.b')` represents the formula `y ~ a + a*b`
 #' @param base.regressors The `names(X)` where X is the input dataset.

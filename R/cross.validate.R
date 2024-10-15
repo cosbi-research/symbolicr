@@ -117,6 +117,8 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
       y.df <- data.frame(y=y.train)
       df.std <- cbind(y.df, X.df.std)
 
+      #Replace NaN & Inf with NA
+      df.std[is.na(df.std) | df.std=="Inf"] <- NA
       # train
       cur.formula.str <- paste0('y',"~",paste(cur.vars, collapse=' + '))
 

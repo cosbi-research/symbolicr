@@ -55,6 +55,7 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
   regressors <- names(cur.dataset)
   dataset.len <- nrow(cur.dataset)
   predictors.len <- length(cur.vars)
+  cur.formula.str <- paste0('y',"~",paste(cur.vars, collapse=' + '))
   ns <- nrow(cur.dataset)
 
   ### compute actual regressors from base regressors by parsing cur.vars
@@ -120,8 +121,6 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
       #Replace NaN & Inf with NA
       df.std[is.na(df.std) | df.std=="Inf"] <- NA
       # train
-      cur.formula.str <- paste0('y',"~",paste(cur.vars, collapse=' + '))
-
       # == FIXED FORMULA
       base.lm <- tryCatch({ stats::lm(stats::as.formula(cur.formula.str), data=df.std) },
                           error=function(e){
@@ -191,14 +190,20 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
     df <- merge(cv.results,real.df, by='BioReg', sort=F, all=F)
     row.names(df) <- df$BioReg
     # remove NA
-    df.nona <- df[!is.na(df$base.pred), ]
+    df.nona <- df[!is.na(df$base.pred) & df$base.pred!="Inf", ]
     # evaluate overall R^2 of K-fold crossvalidation
     #t.glmnet.lm <- lm(real~glmnet.pred, data=df)
     #s.t.glmnet.lm<-summary(t.glmnet.lm)
     #t.dt.lm <- lm(real~dt.pred, data=df)
     #s.t.dt.lm<-summary(t.dt.lm)
 
-    t.base.lm <- stats::lm(real~base.pred, data=df.nona)
+    t.base.lm <- tryCatch({ stats::lm(real~base.pred, data=df.nona) },
+      error=function(e){
+        # use intercept-only model
+        stop(paste0("Predictions contains NaN/Inf values in formula '",cur.formula.str,"': ", e))
+        #stats::lm(y~1, data=df.std)
+      },
+      message=paste0("Predictions contains NaN/Inf values in formula '",cur.formula.str,"'"))
     #s.t.base.lm<-summary(t.base.lm)
     base.lm.cor <- stats::cor(df.nona$base.pred, df.nona$real, use="pairwise.complete.obs")
     base.lm.r.squared <- 1 - sum((df.nona$base.pred-df.nona$real)^2, na.rm = T) / sum((df.nona$real - mean(df.nona$real))^2, na.rm = T)

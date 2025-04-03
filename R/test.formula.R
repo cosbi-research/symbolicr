@@ -46,7 +46,6 @@ test.formula <- function(
   cur.vars <- sort(cur.vars)
   cur.vars.str <- paste(sort(cur.vars), collapse=",")
   print(paste0("Regression on ", cur.vars.str))
-
   experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N,
                                 transformations, cv.norm)
   errs.m <- stats::aggregate(

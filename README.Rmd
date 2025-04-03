@@ -21,7 +21,8 @@ knitr::opts_chunk$set(
    * [Genetic search](#genetic-search)
    * [Random search](#random-search)
    * [Combinatorial Search](#combinatorial-search)
-
+   * [Analyze formula variables](#analyze-formula-variables)
+   
 <!-- TOC end -->
 
 
@@ -167,3 +168,94 @@ comb.search(
 )
 
 ```
+
+## Analyze formula variables
+
+This code highlights the most-important variables among a list of formulas applied to a given dataset.
+
+```{r analyze.variables.example}
+max.formula.len=1
+transformations=list(
+   "log"=function(rdf, x, stats){ log(x) },
+   "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) },
+   "inv"=function(rdf, x, stats){ 1/x }
+)
+random.results <- random.search(
+  X, y, 
+  n.squares=2, 
+  formula.len = max.formula.len, 
+  N=2,
+  K=10,
+  transformations = transformations,
+  cv.norm=F
+)
+
+# compute a unique objective function
+random.results$obj <- apply(random.results, MARGIN=1, FUN=function(row) pe.r.squared.formula.len.fitness(as.data.frame(t(row)), max.formula.len))
+
+# sort by top-N functions (according to obj)
+ordered.res <- random.results[order(random.results$obj,decreasing=T),]
+
+# max fitness on all computed formulas
+best.obj <- ordered.res[1,'obj']
+# analyze top-10 formulas
+# select formulas according to criterion above
+eligible.res <- ordered.res[seq(10), ]
+
+direction = 'max' # obj should be maximized
+sensitivity <- analyze.variables(
+ X, y, eligible.res, fitness.column='obj',
+ # a list of available term transformations
+ transformations=transformations,
+ # a list of rules to remove a variable from a term
+ # ex.
+ #   orig transformation -> base transformation, removed term
+ #   "log_empty_well_p"=c("log10", "empty_well")
+ transformations_replacement_map=list(
+   "log_x1_p"=c("log", "x1")
+ ),
+ custom.abs.mins=list(),
+ K=10,
+ N=2,
+ direction=direction, 
+ max.formula.len=max.formula.len,
+ fitness.fun=pe.r.squared.formula.len.fitness,
+ cv.norm=F
+)
+
+# plottable data.frame of quantile losses per-variable
+variable.importance.df <- sensitivity[['var.imp']]
+n.formulas <- 10
+#### PLOT ANALYSIS ####
+library(ggplot2)
+library(RColorBrewer)
+library(colorspace)
+
+colours <- brewer.pal(11, "Paired")
+cols_d4 <- darken(colours, 0.4)
+
+#png(file.path('sensitivity', paste("sensitivity.",(percent.limit*100),"percent",type,".png", sep = "")), width = 640, height = 490)
+p <- ggplot(variable.importance.df, aes(x=mean.occurrences, y=mean.loss.p, colour=variable)) +
+  theme(
+    text = element_text(size = 15)
+  ) +
+  labs(x = paste0("Mean number of occurrences for best ",n.formulas," formulas"), y = "relative loss %") +
+  #  geom_crossbar(aes(ymin = lower.loss.p, ymax = higher.loss.p), width = 1.5) +
+  geom_pointrange(aes(ymin = lower.loss.p, ymax = higher.loss.p)) +
+  scale_y_continuous(trans = 'log10', limits=c(1,110), n.breaks=8,
+                     labels =c("1%","3%","5%", "10%", "20%", "30%", "50%", "100%"),
+                     breaks =c(1, 3, 5, 10, 20, 30, 50, 100))+
+  scale_x_continuous(limits=c(0,3.05), n.breaks=6,
+                     labels =c("1/5", "1/2", "3/4", "1", "2", "3"),
+                     breaks =c(1/5.0, 1/2.0, 3/4.0, 1, 2, 3))+
+  scale_color_manual(values = cols_d4)
+
+print(p)
+
+```
+
+This plot is showing clearly that variable x1 is much more important than variable x2 as it both 
+
+- occours more often in the top-10 formulas, (value on the X axis)
+- degrades the performance more when removed from formulas (value on the Y axis)
+

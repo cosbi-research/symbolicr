@@ -8,7 +8,7 @@ Description: Find non-linear formulas that fits your input data. You can systema
 License: file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports: 
     data.table,
     GA,

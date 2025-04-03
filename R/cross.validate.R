@@ -82,7 +82,6 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
       }
       test.set.name <- paste(names(y.test), collapse=", ")
       #print(paste0(" == computing ",test.set.name))
-
       # train set
       X.df <- train.set[ , regressors]
       # test set
@@ -181,7 +180,6 @@ cross.validate <- function(cur.dataset, y, cur.vars, custom.abs.mins, K, N, tran
       #local.df.coefs <- cbind(local.df, t(base.full.coef))
       return(local.df)
     })
-
     cv.results<- do.call(rbind, cv.results.l)
     #saveRDS(cv.results, out.file)
 

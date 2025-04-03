@@ -50,13 +50,13 @@ the non-linear relationship:
 ``` r
 library(symbolicr)
 set.seed(1)
-
+# set-up a toy example dataset
 x1<-runif(100, min=2, max=67)
 x2<-runif(100, min=0.01, max=0.1)
-
-y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
-
 X <- data.frame(x1=x1, x2=x2)
+# set up a "true" non-linear relationship
+# with some noise
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
 
 results <- genetic.search(
   X, y, 

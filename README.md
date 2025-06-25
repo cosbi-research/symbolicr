@@ -1,5 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
 
 # Table of Contents
@@ -28,11 +29,13 @@ interoperable search functions are available:
 - `comb.search` allows the user to provide a data.frame of formulas to
   be tested
 
-After installation, see tutorials with
+After installation, see tutorials by typing
 
 ``` r
 browseVignettes('symbolicr')
 ```
+
+in your R console.
 
 ## Installation
 

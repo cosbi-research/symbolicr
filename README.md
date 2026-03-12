@@ -476,8 +476,10 @@ variable.importance.df <- sensitivity[['var.imp']]
 n.formulas <- 10
 #### PLOT ANALYSIS ####
 library(ggplot2)
+#> Warning: package 'ggplot2' was built under R version 4.5.2
 library(RColorBrewer)
 library(colorspace)
+#> Warning: package 'colorspace' was built under R version 4.5.2
 
 colours <- brewer.pal(11, "Paired")
 cols_d4 <- darken(colours, 0.4)

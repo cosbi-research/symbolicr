@@ -61,7 +61,10 @@ This works by removing one variable at a time from the formula and measuring its
 # assumed to be loaded here as 'res'
 #
 # compute objective function from error measures
-res$obj <- apply(res, MARGIN=1, FUN=function(row) pe.r.squared.formula.len.fitness(as.data.frame(t(row)), max.formula.len))
+res$obj <- apply(res, MARGIN=1,
+ FUN=function(row) pe.r.squared.formula.len.fitness(as.data.frame(t(row)),
+ max.formula.len)
+)
 # sort by top-N functions (according to obj)
 ordered.res <- res[order(res$obj,decreasing=T),]
 

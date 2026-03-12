@@ -27,7 +27,10 @@
 #' # assumed to be loaded here as 'res'
 #' #
 #' # compute objective function from error measures
-#' res$obj <- apply(res, MARGIN=1, FUN=function(row) pe.r.squared.formula.len.fitness(as.data.frame(t(row)), max.formula.len))
+#' res$obj <- apply(res, MARGIN=1,
+#'  FUN=function(row) pe.r.squared.formula.len.fitness(as.data.frame(t(row)),
+#'  max.formula.len)
+#' )
 #' # sort by top-N functions (according to obj)
 #' ordered.res <- res[order(res$obj,decreasing=T),]
 #'
@@ -189,7 +192,7 @@ analyze.variables <- function(regressors.df, y, test.formula.df, fitness.column,
     })
 
     keys <- unique(unlist(lapply(losses, names)))
-    loss.terms <- setNames(do.call(mapply, c(FUN=c, lapply(losses, `[`, keys))), keys)
+    loss.terms <- stats::setNames(do.call(mapply, c(FUN=c, lapply(losses, `[`, keys))), keys)
 
     gain.terms <- do.call(rbind,lapply(l, function(sl){
       sl[['gain']]
@@ -214,13 +217,13 @@ analyze.variables <- function(regressors.df, y, test.formula.df, fitness.column,
   # losses by variable
   keys <- unique(unlist(lapply(f.relative.loss.ls, names)))
   keys <- keys[sapply(keys, function(x) !is.na(x))]
-  var.relative.loss <- setNames(do.call(mapply, c(FUN=c, lapply(f.relative.loss.ls, `[`, keys))), keys)
+  var.relative.loss <- stats::setNames(do.call(mapply, c(FUN=c, lapply(f.relative.loss.ls, `[`, keys))), keys)
 
   # variable importance statistics
   global.relative.losses.df <- do.call(rbind, lapply(names(var.relative.loss), function(term){
     losses<-var.relative.loss[[term]]
     neg.losses<- losses[!is.na(losses)]
-    p <- quantile(neg.losses,probs=c(0.05,0.25,0.5,0.75,0.95)) * 100
+    p <- stats::quantile(neg.losses,probs=c(0.05,0.25,0.5,0.75,0.95)) * 100
     #                     exclude positive gains..                                 convert percentage loss to positive
     data.frame(variable=term, mean.occurrences=length(neg.losses)/n.formulas,
                lowest.loss.p=p[['5%']], lower.loss.p=p[['25%']], mean.loss.p=p[['50%']], higher.loss.p=p[['75%']], highest.loss.p=p[['95%']])

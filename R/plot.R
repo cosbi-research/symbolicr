@@ -50,6 +50,8 @@ pred.vs.obs <- function(
     errors.y=5.0,
     with.names=F
 ){
+  base.pred.m = oos = base.pred.ld = base.pred.ud = NULL
+  BioReg = base.pe = base.pe.sd = base.r.squared = base.r.squared.sd = NULL
   cur.vars <- sort(cur.vars)
   cur.vars.str <- paste(sort(cur.vars), collapse=",")
   base.formula <- stats::reformulate(cur.vars, 'y')

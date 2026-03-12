@@ -1,10 +1,19 @@
 Package: symbolicr
-Title: SymbolicR is a Symbolic Regression framework for R
-Version: 0.1.0
-Authors@R: 
+Title: Symbolic Regression framework for R
+Description: Find non-linear formulas that fits your input data. 
+    You can systematically explore and memoize the possible formulas 
+    and it's cross-validation performance, in an incremental fashon. 
+    Two interoperable search functions are available: 
+    `random.search` performs a random exploration, 
+    `genetic.search` employs a genetic optimization algorithm, 
+    `comb.search` combines best results of the two.
+Version: 0.9.9
+Authors@R: c(
     person("Danilo", "Tomasoni", , "tomasoni@cosbi.eu", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0002-8427-4230"))
-Description: Find non-linear formulas that fits your input data. You can systematically explore and memoize the possible formulas and it's cross-validation performance, in an incremental fashon. Two interoperable search functions are available: `random.search` performs a random exploration, `genetic.search` employs a genetic optimization algorithm, `comb.search` combines best results of the two.
+           comment = c(ORCID = "0000-0002-8427-4230")),
+    person("Fondazione The Microsoft Research - University of Trento Centre for Computational and Systems Biology", "COSBI", , "info@cosbi.eu", role = c("cph", "fnd"))
+    )
+URL: https://github.com/cosbi-research/symbolicr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
@@ -20,4 +29,5 @@ Suggests:
     rmarkdown,
     ggplot2
 VignetteBuilder: knitr
-License: GPL (>= 3)
+License: AGPL (>= 3)
+BugReports: https://github.com/cosbi-research/symbolicr/issues

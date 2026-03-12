@@ -1,3 +1,3 @@
-# symbolicr 0.9.9
+# symbolicr 1.0.0
 
 * Initial CRAN submission.

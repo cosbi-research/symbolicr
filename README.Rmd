@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 
 - [SymbolicR](#symbolicr)
    * [Installation](#installation)
+   * [Publications](#publications)
    * [Genetic search](#genetic-search)
    * [Random search](#random-search)
    * [Combinatorial Search](#combinatorial-search)
@@ -27,10 +28,6 @@ knitr::opts_chunk$set(
 
 
 # SymbolicR
-
-[![DOI](https://zenodo.org/badge/830556463.svg)](https://zenodo.org/doi/10.5281/zenodo.12904321)
-<!-- badges: start -->
-<!-- badges: end -->
 
 Find non-linear formulas that fits your input data. 
 You can systematically explore and memoize the possible formulas and its cross-validation performance, in an incremental fashon. 
@@ -47,6 +44,17 @@ browseVignettes('symbolicr')
 ```
 
 in your R console.
+
+## Publications
+
+SymbolicR was featured in the following scientific publication as a data-driven approach to refine and extend a mechanistic model of Fc-fusion protein pharmacokinetics:
+
+<!-- badges: start -->
+Tomasoni et al. *Predicting Aberrant Fc-fusion Protein Pharmacokinetics from in Silico Structural Properties and Physiologically Based Pharmacokinetic (PBPK) Modeling*, The AAPS Journal, March 2026 [link](https://doi.org/10.1208/s12248-026-01232-z)
+
+[![DOI](https://zenodo.org/badge/830556463.svg)](https://zenodo.org/doi/10.5281/zenodo.12904321)
+<!-- badges: end -->
+
 
 ## Installation
 

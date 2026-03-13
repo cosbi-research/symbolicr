@@ -7,6 +7,7 @@
 
 - [SymbolicR](#symbolicr)
   - [Installation](#installation)
+  - [Publications](#publications)
   - [Genetic search](#genetic-search)
   - [Random search](#random-search)
   - [Combinatorial Search](#combinatorial-search)
@@ -15,9 +16,6 @@
 <!-- TOC end -->
 
 # SymbolicR
-
-[![DOI](https://zenodo.org/badge/830556463.svg)](https://zenodo.org/doi/10.5281/zenodo.12904321)
-<!-- badges: start --> <!-- badges: end -->
 
 Find non-linear formulas that fits your input data. You can
 systematically explore and memoize the possible formulas and its
@@ -36,6 +34,22 @@ browseVignettes('symbolicr')
 ```
 
 in your R console.
+
+## Publications
+
+SymbolicR was featured in the following scientific publication as a
+data-driven approach to refine and extend a mechanistic model of
+Fc-fusion protein pharmacokinetics:
+
+<!-- badges: start -->
+
+Tomasoni et al. *Predicting Aberrant Fc-fusion Protein Pharmacokinetics
+from in Silico Structural Properties and Physiologically Based
+Pharmacokinetic (PBPK) Modeling*, The AAPS Journal, March 2026
+[link](https://doi.org/10.1208/s12248-026-01232-z)
+
+[![DOI](https://zenodo.org/badge/830556463.svg)](https://zenodo.org/doi/10.5281/zenodo.12904321)
+<!-- badges: end -->
 
 ## Installation
 
@@ -503,7 +517,7 @@ p <- ggplot(variable.importance.df, aes(x=mean.occurrences, y=mean.loss.p, colou
 print(p)
 ```
 
-<img src="man/figures/README-analyze.variables.example-1.png" width="100%" />
+<img src="man/figures/README-analyze.variables.example-1.png" alt="" width="100%" />
 
 This plot is showing clearly that variable x1 is much more important
 than variable x2 as it both

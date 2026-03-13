@@ -7,7 +7,7 @@ Description: Find non-linear formulas that fits your input data.
     `random.search` performs a random exploration, 
     `genetic.search` employs a genetic optimization algorithm, 
     `comb.search` combines best results of the two.
-Version: 0.9.9
+Version: 1.0.0
 Authors@R: c(
     person("Danilo", "Tomasoni", , "tomasoni@cosbi.eu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8427-4230")),

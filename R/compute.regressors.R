@@ -14,26 +14,32 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' best.vars <- c('inv.mul.patch_hyd_5.patch_hyd_5','mul.patch_ion_3.patch_pos','patch_pos_3')
+#' \donttest{
+#' # set-up a toy example dataset
+#' x1<-runif(100, min=2, max=67)
+#' x2<-runif(100, min=0.01, max=0.1)
+#' X <- data.frame(x1=x1, x2=x2)
+#' # set up a "true" non-linear relationship
+#' # with some noise
+#' y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+#' regressors <- c('x1','x2')
+#' best.vars <- c('inv.mul.x1.x2','mul.x1.x2','x2')
+#'
+#' transformations=list(
+#'   "log"=function(rdf, x, stats){ log(x) },
+#'   "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) },
+#'   "inv"=function(rdf, x, stats){ 1/x }
+#' )
 #'
 #' # parse variables
 #' parsed.vars <- symbolicr::parse.vars(best.vars, regressors, transformations)
 #' # standardize
-#' norm.res <- symbolicr::normalize(regressors.df, custom.mins=list())
-#' regressors.df.std <- norm.res$X.std
-#' regressors.mean.sd <-norm.res$mean.sd
+#' norm.res <- symbolicr::normalize(X, custom.mins=list())
+#' X.std <- norm.res$X.std
+#' X.mean.sd <-norm.res$mean.sd
 #' # compute regressors
-#' regressors.def <- symbolicr::regressors(regressors.df.std, parsed.vars,
-#'                    transformations, regressors.mean.sd, regressors.min.values=NULL)
-#' regressors.min.values <- regressors.def$min.values
-#' formula.df <- regressors.def$regressors
-#'
-#' # extract coefficients of given formula
-#' dataset.std <- cbind(formula.df, y)
-#' cur.formula.str <- paste0('y',"~",paste(best.vars, collapse=' + '))
-#' base.lm <- lm(as.formula(base.formula), data=dataset.std)
-#' base.lm$coefficients
+#' symbolicr::regressors(X.std, parsed.vars,
+#'                    transformations, X.mean.sd, regressors.min.values=NULL)
 #' }
 #'
 regressors <- function(base.X.df.std, parsed.vars, transformations, X.mean.sd, regressors.min.values=NULL){

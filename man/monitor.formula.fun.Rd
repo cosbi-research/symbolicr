@@ -9,6 +9,9 @@ monitor.formula.fun(obj)
 \arguments{
 \item{obj}{The solution object of the \code{GA} package.}
 }
+\value{
+No return value, prints out current best fitness value for tracing purposes.
+}
 \description{
 Default formula to monitor genetic evolution
 }

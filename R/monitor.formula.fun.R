@@ -3,6 +3,7 @@
 #' @param obj The solution object of the `GA` package.
 #' @seealso genetic.search
 #'
+#' @return No return value, prints out current best fitness value for tracing purposes.
 #' @export
 #'
 monitor.formula.fun<- function(obj) {
@@ -14,5 +15,5 @@ monitor.formula.fun<- function(obj) {
     obj@names[which(curbest.bin == 1)]
   }))
   equivalent.formulas <- paste(lapply(best.vars.l, function(arr){paste(arr, collapse=" + ")}), collapse=" | ")
-  print(paste0("Iteration: ",obj@iter, " Mean/Max fitness:", formatC(avg.fitness, format = "e", digits = 2), " / ", formatC(max.fitness, format = "e", digits = 2)," Best: ",equivalent.formulas))
+  message(paste0("Iteration: ",obj@iter, " Mean/Max fitness:", formatC(avg.fitness, format = "e", digits = 2), " / ", formatC(max.fitness, format = "e", digits = 2)," Best: ",equivalent.formulas))
 }

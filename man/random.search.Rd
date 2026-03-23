@@ -65,31 +65,39 @@ A data.frame of formulas and the corresponding cross-validation performance meas
 Randomly sample and test different formulas with cross-validation.
 }
 \examples{
-\dontrun{
-  transformations <- list(
-     # rdf = complete regressors/predictors data.frame
-     # x = the column on which we have to compute the non-linearity
-     # z = list("min"=min(vals),"absmin"=min(abs(vals)),"absmax"=max(abs(vals)),
-     #           zero in original space projected in normalized space,
-     #           that is: -mean(vals)/sd(vals)
-     #          "projzero"=prjzero)
-     "log10"=function(rdf, x, z){
-          log10(0.1+abs(z$min)+x)
-     },
-     "inv"=function(rdf, x, z){
-          1/(0.1+abs(z$min)+x)
-     }
-  )
+\donttest{
+# set-up a toy example dataset
+x1<-runif(100, min=2, max=67)
+x2<-runif(100, min=0.01, max=0.1)
+X <- data.frame(x1=x1, x2=x2)
+# set up a "true" non-linear relationship
+# with some noise
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
 
-  new.sample.res <- random.search(
-     complete.X.df, l.F2,
-     n.squares=1,
-     formula.len=3,
-     maxiter=1000000,
-     glob.filepath = base.filepath,
-     res.filepath = res.filepath,
+# stats:
+#    list(
+#       "min"=..,
+#       "absmin"=..,
+#       # zero in original space projected in std space
+#       "projzero"=prjzero
+#    )
+transformations=list(
+  "log"=function(rdf, x, stats){ log(x) },
+  "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) },
+  "inv"=function(rdf, x, stats){ 1/x }
+)
+
+random.res <- random.search(
+     X, y,
+     n.squares=2,
+     formula.len=1,
+     maxiter=10,
+     # formulas from previous runs
+     glob.filepath = NULL,
+     # formulas computed by this call
+     local.filepath = NULL,
      transformations = transformations,
-     memoization=T
+     memoization=FALSE
  )
 }
 }

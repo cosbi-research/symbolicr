@@ -17,19 +17,32 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' base.filepath <- paste0('regression/regression',type,'.exploration.l',formula.len,'.rData')
-#' res.new <- exaustive.search(regressors.df, l.Fn,
+#' \donttest{
+#' # set-up a toy example dataset
+#' x1<-runif(100, min=2, max=67)
+#' x2<-runif(100, min=0.01, max=0.1)
+#' X <- data.frame(x1=x1, x2=x2)
+#' # set up a "true" non-linear relationship
+#' # with some noise
+#' y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+#'
+#' max.formula.len=formula.len=1
+#' n.squares=1
+#' K=2
+#' N=2
+#' seed=1001
+#' res.new <- exaustive.search(X, y,
 #'                             n.squares=1,
 #'                             formula.len=3,
-#'                             K=15, N=10, seed=NULL,
+#'                             K=2, N=3, seed=NULL,
 #'                             transformations=list(
-#'                               "log10"=function(rdf, x, z){ log10(0.1+abs(z)+x) },
-#'                               "inv"=function(rdf, x, z){ 1/(0.1+abs(z)+x) }
+#'                "log"=function(rdf, x, stats){ log(x) },
+#'                "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) },
+#'                "inv"=function(rdf, x, stats){ 1/x }
 #'                             ),
 #'                             custom.abs.mins=list(),
-#'                             glob.filepath = base.filepath,
-#'                             chunk.size=NULL, cv.norm=T)
+#'                             glob.filepath = NULL,
+#'                             chunk.size=NULL, cv.norm=FALSE)
 #' }
 exaustive.search <- function(
     complete.X.df,
@@ -46,7 +59,7 @@ exaustive.search <- function(
     custom.abs.mins=list(),
     glob.filepath=NULL,
     chunk.size=NULL,
-    cv.norm=F
+    cv.norm=FALSE
 ){
   if(!is.null(glob.filepath)){
     res <- readRDS(glob.filepath)
@@ -65,7 +78,7 @@ exaustive.search <- function(
   }else{
     missing <- combinations
   }
-  print(paste0("Computing missing formulas: ", length(missing)))
+  message(paste0("Computing missing formulas: ", length(missing)))
   if(!is.null(chunk.size))
     missing <- missing[seq(1, chunk.size)]
   if(length(missing)>0){
@@ -75,8 +88,12 @@ exaustive.search <- function(
                            combinations=t(as.data.frame(strsplit(missing,",",fixed=T))),
                            K=K, N=N, seed=seed,
                            transformations=transformations, custom.abs.mins=list(), cv.norm=T)
-    res <- rbind(res, res.new)
-    saveRDS(res, glob.filepath)
+    if(!is.null(glob.filepath)){
+      res <- rbind(res, res.new)
+      saveRDS(res, glob.filepath)
+    }else{
+      res <- res.new
+    }
   }
   return(res.new)
 }

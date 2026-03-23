@@ -18,7 +18,7 @@ comb.search(
      1/(0.1 + abs(z) + x)
  }),
   custom.abs.mins = list(),
-  cv.norm = F
+  cv.norm = FALSE
 )
 }
 \arguments{
@@ -48,26 +48,41 @@ Given a set of formulas, this function systematically evaluates
 all combinations of formula terms, of a given length.
 }
 \examples{
-\dontrun{
-base.filepath <- paste0('regression/regression',type,'.exploration.l',formula.len,'.rData')
-res <- readRDS(base.filepath)
-complete.regressors <- regressors.names(regressors.df, n.squares, transformations)
+\donttest{
+# set-up a toy example dataset
+x1<-runif(100, min=2, max=67)
+x2<-runif(100, min=0.01, max=0.1)
+X <- data.frame(x1=x1, x2=x2)
+# set up a "true" non-linear relationship
+# with some noise
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+
+max.formula.len=formula.len=1
+n.squares=1
+K=2
+N=2
+seed=1001
+transformations=list(
+  "log"=function(rdf, x, stats){ log(x) },
+  "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) },
+  "inv"=function(rdf, x, stats){ 1/x }
+)
+complete.regressors <- regressors.names(X, n.squares, transformations)
 # compute combinations up to length formula.len
 regressors.list <- lapply(seq(formula.len), function(x) complete.regressors)
-combinations <- RcppAlgos::comboGrid(regressors.list, repetition = F)
+combinations <- RcppAlgos::comboGrid(regressors.list, repetition = FALSE)
 combinations <- apply(combinations, MARGIN=1, FUN=function(row){
   paste(row, collapse=",")
 })
 names(combinations)<-NULL
 # get missing formulas
-missing <- setdiff(combinations, res$vars)
+# missing <- setdiff(combinations, res$vars)
+missing <- combinations
 # compute exaustively all missing formulas
-res.new <- comb.search(regressors.df, l.Fn,
+res.new <- comb.search(X, y,
                        # data.frame of n.missing.values x formula.len
-                       combinations=t(as.data.frame(strsplit(missing,",",fixed=T))),
+                       combinations=t(as.data.frame(strsplit(missing,",",fixed=TRUE))),
                        K=K, N=N, seed=seed,
-                       transformations=transformations, custom.abs.mins=list(), cv.norm=T)
-res <- rbind(res, res.new)
-saveRDS(res, base.filepath)
+                       transformations=transformations, custom.abs.mins=list(), cv.norm=TRUE)
 }
 }

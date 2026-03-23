@@ -18,7 +18,7 @@ analyze.variables(
   direction = "max",
   max.formula.len = max.formula.len,
   fitness.fun = pe.r.squared.formula.len.fitness,
-  cv.norm = T
+  cv.norm = TRUE
 )
 }
 \arguments{
@@ -55,46 +55,66 @@ A list of "terms that"loss" and "gain" variables, with a measure of the (relativ
 This works by removing one variable at a time from the formula and measuring its new (cross-validation) fitness.
 }
 \examples{
-\dontrun{
-# candidates found by random.sarch or genetic.search
-# (stored as rData in glob.filepath/local.filepath)
-# assumed to be loaded here as 'res'
-#
-# compute objective function from error measures
-res$obj <- apply(res, MARGIN=1,
- FUN=function(row) pe.r.squared.formula.len.fitness(as.data.frame(t(row)),
- max.formula.len)
+\donttest{
+# set-up a toy example dataset
+x1<-runif(100, min=2, max=67)
+x2<-runif(100, min=0.01, max=0.1)
+X <- data.frame(x1=x1, x2=x2)
+# set up a "true" non-linear relationship
+# with some noise
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+
+max.formula.len=1
+transformations=list(
+  "log"=function(rdf, x, stats){ log(x) },
+  "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) },
+  "inv"=function(rdf, x, stats){ 1/x }
 )
+random.results <- random.search(
+  X, y,
+  n.squares=2,
+  formula.len = max.formula.len,
+  N=2,
+  K=10,
+  transformations = transformations,
+  cv.norm=FALSE
+)
+# compute a unique objective function
+random.results$obj <- apply(random.results, MARGIN=1,
+  FUN=function(row) pe.r.squared.formula.len.fitness(as.data.frame(t(row)), max.formula.len)
+)
+
 # sort by top-N functions (according to obj)
-ordered.res <- res[order(res$obj,decreasing=T),]
+ordered.res <- random.results[order(random.results$obj,decreasing=TRUE),]
 
 # max fitness on all computed formulas
 best.obj <- ordered.res[1,'obj']
-# take formulas up to 40\% worse than the max
-percent.limit <- 0.6
-abs.limit <- best.obj*(1-percent.limit)
+# analyze top-10 formulas
 # select formulas according to criterion above
-eligible.res <- ordered.res[ordered.res$obj >= abs.limit, ]
+eligible.res <- ordered.res[seq(10), ]
 
-direction = 'max' # obj should be minimized
+direction = 'max' # obj should be maximized
 sensitivity <- analyze.variables(
-  data.df, eligible.res, 'obj',
+  X, y, eligible.res, fitness.column='obj',
   # a list of available term transformations
-  full.transformations,
+  transformations=transformations,
   # a list of rules to remove a variable from a term
   # ex.
   #   orig transformation -> base transformation, removed term
   #   "log_empty_well_p"=c("log10", "empty_well")
-  transformations_replacement_map,
-  direction, max.formula.len=4,
-  fitness.fun=pe.r.squared.formula.len.fitness
+  transformations_replacement_map=list(
+    "log_x1_p"=c("log", "x1")
+  ),
+  custom.abs.mins=list(),
+  K=10,
+  N=2,
+  direction=direction,
+  max.formula.len=max.formula.len,
+  fitness.fun=pe.r.squared.formula.len.fitness,
+  cv.norm=FALSE
 )
 
 # plottable data.frame of quantile losses per-variable
-sensitivity[['var.imp']]
-# variables that make the formula worse if removed
-sensitivity[['formula.loss']]
-# variables that improve the formula if removed
-sensitivity[['formula.gain']]
+variable.importance.df <- sensitivity[['var.imp']]
 }
 }

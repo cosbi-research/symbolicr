@@ -18,19 +18,35 @@ A single double value, the bigger the value the better the formula.
 Default fitness function for \code{genetic.search}
 }
 \examples{
-\dontrun{
- best.finetuned <- genetic.search(
-                     best.vars.l=list(
-                        c('inv.mul.patch_hyd_2.patch_hyd_2',
-                          'mul.patch_hyd_5.patch_pos_.'),
-                          ...
-                         ),
-                     complete.X.df=X,
-                     n.squares=1,
-                     max.formula.len=4,
-                     y=Y,
-                     maxiter=1000,
-                     fitness.fun=pe.r.squared.formula.len.fitness
-                  )
+\donttest{
+# set-up a toy example dataset
+x1<-runif(100, min=2, max=67)
+x2<-runif(100, min=0.01, max=0.1)
+X <- data.frame(x1=x1, x2=x2)
+# set up a "true" non-linear relationship
+# with some noise
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+
+genetic.search(
+ X,
+ y,
+ n.squares=1,
+ maxiter=10,
+ glob.filepath=NULL,
+ local.filepath=NULL,
+ memoization=FALSE,
+ pcrossover=0.2,
+ pmutation=0.8,
+ seed=NULL,
+ max.formula.len=2,
+ keepBest=TRUE,
+ K=2,
+ N=3,
+ popSize = 5,
+ fitness.fun=pe.r.squared.formula.len.fitness,
+ best.vars.l = list(
+       c('x1','x2')
+ )
+)
 }
 }

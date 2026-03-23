@@ -15,28 +15,44 @@
 #' @param with.names Plot also product name
 #'
 #' @export
+#' @return ggplot2::ggplot object ready to be plotted
 #'
 #' @examples
-#' \dontrun{
-#'    # do actual cross-validation experiments and
-#'    # plot results as observed vs predicted values (out-of-sample)
-#'    # NOTE: complete.X.df should contain the columns
-#'    # `patch_hyd_2`, `patch_pos_.` and `patch_hyd_5`
-#'    experiments.0 <- pred.vs.obs(
-#'                       complete.X.df, y,
-#'                       cur.vars=c('inv.patch_hyd_2','patch_hyd_5'),
-#'                       custom.abs.mins=list(),
-#'                       K=7,
-#'                       N=10,
-#'                       transformations=list(
-#'                             "log10"=function(rdf, x, min.val){
-#'                                            log10(0.1+abs(min.val)+x)
-#'                                     },
-#'                             "inv"=function(rdf, x, min.val){
-#'                                            1/(0.1+abs(min.val)+x)
-#'                                   }
-#'                       )
-#'                     )
+#' \donttest{
+#' # set-up a toy example dataset
+#' x1<-runif(100, min=2, max=67)
+#' x2<-runif(100, min=0.01, max=0.1)
+#' X <- data.frame(x1=x1, x2=x2)
+#' # set up a "true" non-linear relationship
+#' # with some noise
+#' y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+#' n.squares=1
+#' K=2
+#' N=2
+#' seed=1001
+#'
+#' transformations=list(
+#'   "log"=function(rdf, x, stats){ log(x) },
+#'   "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) },
+#'   "inv"=function(rdf, x, stats){ 1/x }
+#' )
+#'
+#' best.f <- list(
+#'   c('inv.mul.x1.x2','x1'),
+#'   c('inv.mul.x1.x2','x2')
+#' )
+#' # analyze different formulas with predicted vs observed plot.
+#' # the more data points align round the x=y line, the more
+#' # the prediction of the corresponding formula is accurate
+#' plots <- lapply(best.f, function(test.f){
+#'     pred.vs.obs(X,
+#'                 y, test.f,
+#'                 list(), K, N,
+#'                 transformations,
+#'                 cv.norm = FALSE,
+#'                 errors.x=2.5, errors.y=0.5
+#'    )
+#' })
 #'}
 pred.vs.obs <- function(
     complete.X.df,
@@ -59,7 +75,7 @@ pred.vs.obs <- function(
   base.formula.plus.pos <- as.integer(regexpr("+", base.formula.str, fixed=T))
   base.formula.c <- c(substr(base.formula.str, 0, base.formula.plus.pos-1), substr(base.formula.str, base.formula.plus.pos-1, nchar(base.formula.str)))
 
-  print(paste0("Regression on ", cur.vars.str))
+  message(paste0("Regression on ", cur.vars.str))
   experiments <- cross.validate(complete.X.df, y, cur.vars, custom.abs.mins, K, N,
                                 transformations, cv.norm)
 

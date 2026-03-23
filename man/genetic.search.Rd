@@ -92,37 +92,84 @@ of them in order maximize the value of the fitness function
 that defaults to \code{pe.r.squared.formula.len.fitness}
 }
 \examples{
-\dontrun{
-# variables  app_charge pI_Fc patch_pos_3 patch_hyd_2
-            patch_hyd_5 ens_dipole and is.monovalent
-# are assumed to be in the complete.X.df input dataset
-# variables starting with 'is.' suffix won't be normalized,
-# because assumed to be categorical variables (0/1)
-best.vars.l <- list(
- #c('log10.mul.app_charge.pI_Fc','log10.patch_pos_3',
-    'mul.patch_pos.pI_Fc'),
- #c('inv.mul.patch_hyd_2.patch_hyd_2'),
- c('inv.mul.patch_hyd_5.patch_hyd_5','log10.mul.pI_Fc.pI_Fc',
-   'mul.ens_dipole.is.monovalent')
+\donttest{
+# set-up a toy example dataset
+x1<-runif(100, min=2, max=67)
+x2<-runif(100, min=0.01, max=0.1)
+X <- data.frame(x1=x1, x2=x2)
+# set up a "true" non-linear relationship
+# with some noise
+y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+
+# stats:
+#    list(
+#       "min"=..,
+#       "absmin"=..,
+#       # zero in original space projected in std space
+#       "projzero"=prjzero
+#    )
+transformations=list(
+  "log"=function(rdf, x, stats){ log(x) },
+  "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) },
+  "inv"=function(rdf, x, stats){ 1/x }
 )
+
+# empty datastore
+datastore='test.rData'
+genetic.datastore='test.genetic.rData'
+random.datastore='test.random.rData'
+saveRDS(empty.sample(), datastore)
+saveRDS(empty.sample(), genetic.datastore)
+saveRDS(empty.sample(), random.datastore)
+
+random.res <- random.search(
+     X, y,
+     n.squares=2,
+     formula.len=1,
+     maxiter=10,
+     # formulas from previous runs
+     glob.filepath = datastore,
+     # formulas computed by this call
+     local.filepath = random.datastore,
+     transformations = transformations,
+     memoization=TRUE
+ )
+
+res <- readRDS(datastore)
+# check random.res...
+# append to global results to avoid recompute
+res <- rbind(res, random.res)
+saveRDS(res, datastore)
+
+# search more with genetic algorithm without
+# re-analyzing already analyzed formulas
+# stored in datastore
 best.finetuned <- genetic.search(
- complete.X.df,
- l.F2,
+ X,
+ y,
  n.squares=1,
- maxiter=1000,
- glob.filepath=file.path(...),
- local.filepath=file.path(...),
- memoization=F,
+ maxiter=10,
+ glob.filepath=datastore,
+ local.filepath=genetic.datastore,
+ memoization=TRUE,
  pcrossover=0.2,
  pmutation=0.8,
  seed=NULL,
  max.formula.len=4,
- keepBest=T,
- K=17,
- N=10,
- popSize = 100,
- best.vars.l = best.vars.l
+ keepBest=TRUE,
+ K=2,
+ N=3,
+ popSize = 5,
+ fitness.fun=pe.r.squared.formula.len.fitness,
+ # multiple best initial guess
+ best.vars.l = list(
+       c('mul.x1.x2','x2')
+ )
 )
+
+file.remove(datastore)
+file.remove(genetic.datastore)
+file.remove(random.datastore)
 }
 }
 \seealso{

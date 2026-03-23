@@ -1,6 +1,6 @@
 Package: symbolicr
 Title: Symbolic Regression Framework
-Description: Find non-linear formulas that fits your input data. You can systematically explore and memorize the possible formulas and it's cross-validation performance, in an incremental fashion. Two interoperable search functions are available: 1) random.search() performs a random exploration, 2) genetic.search() employs a genetic optimization algorithm, 3) comb.search() combines best results of the two. For more details see Tomasoni et al. (2026) <doi:10.1208/s12248-026-01232-z>.
+Description: Find non-linear formulas that fits your input data. You can systematically explore and memorize the possible formulas and it's cross-validation performance, in an incremental fashion. Three main interoperable search functions are available: 1) random.search() performs a random exploration, 2) genetic.search() employs a genetic optimization algorithm, 3) comb.search() combines best results of the first two. For more details see Tomasoni et al. (2026) <doi:10.1208/s12248-026-01232-z>
 Version: 1.0.0
 Authors@R: c(
     person("Danilo", "Tomasoni", , "tomasoni@cosbi.eu", role = c("aut", "cre"),

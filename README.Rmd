@@ -52,7 +52,7 @@ SymbolicR was featured in the following scientific publication as a data-driven 
 <!-- badges: start -->
 Tomasoni et al. *Predicting Aberrant Fc-fusion Protein Pharmacokinetics from in Silico Structural Properties and Physiologically Based Pharmacokinetic (PBPK) Modeling*, The AAPS Journal, March 2026 [link](https://doi.org/10.1208/s12248-026-01232-z)
 
-[![DOI](https://zenodo.org/badge/830556463.svg)](https://zenodo.org/doi/10.5281/zenodo.12904321)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12904322.svg)](https://doi.org/10.5281/zenodo.12904322)
 <!-- badges: end -->
 
 

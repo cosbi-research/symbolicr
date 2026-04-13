@@ -65,7 +65,6 @@ A data.frame of formulas and the corresponding cross-validation performance meas
 Randomly sample and test different formulas with cross-validation.
 }
 \examples{
-\donttest{
 # set-up a toy example dataset
 x1<-runif(100, min=2, max=67)
 x2<-runif(100, min=0.01, max=0.1)
@@ -91,7 +90,7 @@ random.res <- random.search(
      X, y,
      n.squares=2,
      formula.len=1,
-     maxiter=10,
+     maxiter=2,
      # formulas from previous runs
      glob.filepath = NULL,
      # formulas computed by this call
@@ -99,7 +98,6 @@ random.res <- random.search(
      transformations = transformations,
      memoization=FALSE
  )
-}
 }
 \seealso{
 genetic.search

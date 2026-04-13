@@ -25,7 +25,6 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' # set-up a toy example dataset
 #' x1<-runif(100, min=2, max=67)
 #' x2<-runif(100, min=0.01, max=0.1)
@@ -51,7 +50,7 @@
 #'      X, y,
 #'      n.squares=2,
 #'      formula.len=1,
-#'      maxiter=10,
+#'      maxiter=2,
 #'      # formulas from previous runs
 #'      glob.filepath = NULL,
 #'      # formulas computed by this call
@@ -59,7 +58,6 @@
 #'      transformations = transformations,
 #'      memoization=FALSE
 #'  )
-#'}
 random.search <- function(
     complete.X.df,
     y,

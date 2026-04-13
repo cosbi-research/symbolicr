@@ -66,12 +66,12 @@ Randomly sample and test different formulas with cross-validation.
 }
 \examples{
 # set-up a toy example dataset
-x1<-runif(100, min=2, max=67)
-x2<-runif(100, min=0.01, max=0.1)
+x1<-runif(50, min=2, max=67)
+x2<-runif(50, min=0.01, max=0.1)
 X <- data.frame(x1=x1, x2=x2)
 # set up a "true" non-linear relationship
 # with some noise
-y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
+y <- log10(x1^2*x2) + rnorm(50, 0, 0.001)
 
 # stats:
 #    list(
@@ -82,15 +82,14 @@ y <- log10(x1^2*x2) + rnorm(100, 0, 0.001)
 #    )
 transformations=list(
   "log"=function(rdf, x, stats){ log(x) },
-  "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) },
-  "inv"=function(rdf, x, stats){ 1/x }
+  "log_x1_p"=function(rdf, x, stats){ log(rdf$x1 + x) }
 )
 
 random.res <- random.search(
      X, y,
-     n.squares=2,
+     n.squares=1,
      formula.len=1,
-     maxiter=2,
+     maxiter=1,
      # formulas from previous runs
      glob.filepath = NULL,
      # formulas computed by this call

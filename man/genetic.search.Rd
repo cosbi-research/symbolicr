@@ -20,7 +20,7 @@ genetic.search(
   custom.abs.mins = list(),
   glob.filepath = NULL,
   local.filepath = NULL,
-  memoization = F,
+  memoization = FALSE,
   monitor = monitor.formula.fun,
   maxiter = 100,
   N = 2,
@@ -28,8 +28,8 @@ genetic.search(
   pcrossover = 0.2,
   popSize = 50,
   pmutation = 0.8,
-  keepBest = F,
-  cv.norm = F,
+  keepBest = FALSE,
+  cv.norm = FALSE,
   best.vars.l = list()
 )
 }

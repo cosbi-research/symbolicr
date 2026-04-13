@@ -17,10 +17,10 @@ pred.vs.obs(
     }, inv = function(rdf, x, z) {
      1/(0.1 + abs(z$min) + x)
  }),
-  cv.norm = T,
+  cv.norm = TRUE,
   errors.x = 3.2,
   errors.y = 5,
-  with.names = F
+  with.names = FALSE
 )
 }
 \arguments{

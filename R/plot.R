@@ -61,10 +61,10 @@ pred.vs.obs <- function(
       "log10"=function(rdf, x, z){ log10(0.1+abs(z$min)+x) },
       "inv"=function(rdf, x, z){ 1/(0.1+abs(z$min)+x) }
     ),
-    cv.norm=T,
+    cv.norm=TRUE,
     errors.x=3.2,
     errors.y=5.0,
-    with.names=F
+    with.names=FALSE
 ){
   base.pred.m = oos = base.pred.ld = base.pred.ud = NULL
   BioReg = base.pe = base.pe.sd = base.r.squared = base.r.squared.sd = NULL

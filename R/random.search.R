@@ -142,7 +142,7 @@ random.search <- function(
           prev.vars <<- append(prev.vars, cur.vars.str, after=point)
         }
       }else{
-        print("NOTICE: Skipping already computed..")
+        message("NOTICE: Skipping already computed..")
         errs.m <- empty.sample()
       }
 

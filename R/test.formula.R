@@ -54,7 +54,7 @@ test.formula <- function(
       "log10"=function(rdf, x, z){ log10(0.1+abs(z$min)+x) },
       "inv"=function(rdf, x, z){ 1/(0.1+abs(z$min)+x) }
     ),
-    cv.norm=T
+    cv.norm=TRUE
 ){
   # impose lexicographical order
   cur.vars <- sort(cur.vars)

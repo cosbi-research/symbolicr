@@ -74,8 +74,8 @@ random.search <- function(
     glob.filepath=NULL,
     local.filepath=NULL,
     memoization.interval=50,
-    memoization=F,
-    cv.norm=F){
+    memoization=FALSE,
+    cv.norm=FALSE){
 
   complete.regressors <- regressors.names(complete.X.df, n.squares, transformations)
   regressors.len <- length(complete.regressors)

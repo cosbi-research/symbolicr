@@ -17,7 +17,7 @@ test.formula(
     }, inv = function(rdf, x, z) {
      1/(0.1 + abs(z$min) + x)
  }),
-  cv.norm = T
+  cv.norm = TRUE
 )
 }
 \arguments{

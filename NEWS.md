@@ -1,3 +1,5 @@
+# symbolicr (development version)
+
 # symbolicr 1.0.0
 
 * Initial CRAN submission.

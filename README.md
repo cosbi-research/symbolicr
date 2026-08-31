@@ -238,11 +238,11 @@ this updated transformation function
 log.std <- function(x, stats){ log(0.1 + abs(stats$min) + x) }
 ```
 
-The `stats` object contains - min: the minimum of the column values -
-absmin: the minimum of the absolute values of the columns - absmax: the
-maximum of the absolute values of the columns - projzero: -mean/sd of
-the columns, that is the position of the zero in the original,
-non-normalized space.
+The `stats` object contains 
+- min: the minimum of the column values
+- absmin: the minimum of the absolute values of the columns
+- absmax: the maximum of the absolute values of the columns
+- projzero: -mean/sd of the columns, that is the position of the zero in the original, non-normalized space.
 
 Type `?dataset.min.maxs` in your R console for further informations.
 
